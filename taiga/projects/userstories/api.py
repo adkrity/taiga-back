@@ -126,6 +126,11 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         include_attachments = "include_attachments" in self.request.QUERY_PARAMS
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
 
+        # added by jay
+        if include_attachments and self.request.QUERY_PARAMS.get('project') == 1:
+            include_attachments = False
+        # added by jay end
+
         epic_id = self.request.QUERY_PARAMS.get("epic", None)
         # We can be filtering by more than one epic so epic_id can consist
         # of different ids separated by comma. In that situation we will use
