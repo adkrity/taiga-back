@@ -10,6 +10,7 @@ from django.conf import settings
 from taiga.base.api import serializers
 from taiga.base.fields import MethodField, Field, FileField
 from taiga.base.utils.thumbnails import get_thumbnail_url
+from taiga.base.utils.date import convert_to_local_time, datetime_to_string
 
 from . import services
 
@@ -37,7 +38,7 @@ class AttachmentSerializer(serializers.LightSerializer):
 
     #added by jay
     def get_name_with_created(self, obj):
-        return "{}  {}".format(str(obj.created_date), obj.name)
+        return "{}  {}".format(datetime_to_string(convert_to_local_time(obj.created_date)), obj.name)
     #added by jay end
 
     def get_url(self, obj):
