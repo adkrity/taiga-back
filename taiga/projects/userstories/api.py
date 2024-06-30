@@ -127,6 +127,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         include_tasks = "include_tasks" in self.request.QUERY_PARAMS
 
         # added by jay
+        include_attachments = False
         if include_attachments and self.request.QUERY_PARAMS.get('project') == 1:
             include_attachments = False
         # added by jay end
