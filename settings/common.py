@@ -78,7 +78,7 @@ IGNORABLE_404_ENDS = (".php", ".cgi")
 IGNORABLE_404_STARTS = ("/phpmyadmin/",)
 
 ATOMIC_REQUESTS = True
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Asia/Kolkata'
 LOGIN_URL = "/auth/login/"
 USE_TZ = True
 
