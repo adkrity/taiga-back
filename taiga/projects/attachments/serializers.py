@@ -18,8 +18,8 @@ class AttachmentSerializer(serializers.LightSerializer):
     id = Field()
     project = Field(attr="project_id")
     owner = Field(attr="owner_id")
-    # name = Field()
-    name = MethodField("get_name_with_created") #added by jay
+    name = Field()
+    # name = MethodField("get_name_with_created") #added by jay
     attached_file = FileField()
     size = Field()
     url = Field()
@@ -36,8 +36,8 @@ class AttachmentSerializer(serializers.LightSerializer):
     preview_url = MethodField("get_preview_url")
 
     #added by jay
-    def get_name_with_created(self, obj):
-        return "{}-{}".format(str(obj.created_date), obj.name)
+    # def get_name_with_created(self, obj):
+    #     return "{}-{}".format(str(obj.created_date), obj.name)
     #added by jay end
 
     def get_url(self, obj):
