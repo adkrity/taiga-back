@@ -19,8 +19,8 @@ class AttachmentSerializer(serializers.LightSerializer):
     id = Field()
     project = Field(attr="project_id")
     owner = Field(attr="owner_id")
-    # name = Field()
-    name = MethodField("get_name_with_created") #added by jay
+    name = Field()
+    # name = MethodField("get_name_with_created") #added by jay
     attached_file = FileField()
     size = Field()
     url = Field()

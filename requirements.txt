@@ -95,7 +95,7 @@ html5lib==1.1
     # via -r requirements.in
 idna==3.4
     # via requests
-imageio==2.25.1
+imageio==2.34.1
     # via scikit-image
 importlib-metadata==6.0.0
     # via markdown
@@ -103,7 +103,7 @@ jinja2==3.1.2
     # via django-jinja
 kombu==5.2.4
     # via celery
-lxml==4.9.2
+lxml==5.2.2
     # via premailer
 markdown==3.4.1
     # via
@@ -117,7 +117,7 @@ netaddr==0.8.0
     # via -r requirements.in
 networkx==3.0
     # via scikit-image
-numpy==1.24.2
+numpy~=1.26.4
     # via
     #   imageio
     #   psd-tools
@@ -169,7 +169,7 @@ pytz==2022.7.1
     #   celery
     #   django
     #   sampledata
-pywavelets==1.4.1
+pywavelets==1.6.0
     # via scikit-image
 raven==6.10.0
     # via -r requirements.in
@@ -190,9 +190,9 @@ rudder-sdk-python==1.0.0b1
     # via -r requirements.in
 sampledata==0.3.7
     # via django-sampledatahelper
-scikit-image==0.19.3
+scikit-image==0.24.0
     # via psd-tools
-scipy==1.10.0
+scipy==1.13.1
     # via
     #   psd-tools
     #   scikit-image

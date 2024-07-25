@@ -17,20 +17,34 @@ APPEND_SLASH = False
 ALLOWED_HOSTS = ["*"]
 
 ADMINS = (
-    ("Admin", "example@example.com"),
+    ("Jay", "jaypatel16@gmail.com"),
 )
+
+#ADMINS = (
+#)
 
 DEBUG = False
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "taiga",
-        "USER": "taiga",
-        "PASSWORD": "taiga",
-        "HOST": "127.0.0.1"
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'taiga',
+        'USER': 'taiga',
+        'PASSWORD': 'taiga',
+        'HOST': '172.31.45.84',
+        'PORT': '5432',
     }
 }
+
+#DATABASES = {
+#    "default": {
+#        "ENGINE": "django.db.backends.postgresql",
+#        "NAME": "taiga",
+#        "USER": "taiga",
+#        "PASSWORD": "taiga",
+#        "HOST": "127.0.0.1"
+#    }
+#}
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -45,10 +59,10 @@ CACHES = {
 INSTANCE_TYPE = "SRC"
 
 # CELERY
-CELERY_ENABLED = False
+CELERY_ENABLED = True
 from kombu import Queue  # noqa
 
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+#CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
 CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
 CELERY_TASK_SERIALIZER = "pickle"
@@ -369,7 +383,7 @@ WSGI_APPLICATION = "taiga.wsgi.application"
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "filters": {
         "require_debug_false": {
             "()": "django.utils.log.RequireDebugFalse"
@@ -599,8 +613,8 @@ GITLAB_VALID_ORIGIN_IPS = []
 
 EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 
-WEBHOOKS_ENABLED = False
-WEBHOOKS_ALLOW_PRIVATE_ADDRESS = False
+WEBHOOKS_ENABLED = True
+WEBHOOKS_ALLOW_PRIVATE_ADDRESS = True
 WEBHOOKS_ALLOW_REDIRECTS = False
 
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
