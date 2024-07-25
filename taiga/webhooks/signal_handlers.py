@@ -33,6 +33,10 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     if instance.is_hidden:
         return None
 
+    if instance.user['pk'] == 19:
+        # for API user ignore webhook
+        return None
+
     model = history_service.get_model_from_key(instance.key)
     pk = history_service.get_pk_from_key(instance.key)
     try:
