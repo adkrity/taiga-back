@@ -44,7 +44,6 @@ from . import permissions
 from . import serializers
 from . import services
 from . import validators
-from ..models import UserStoryStatus
 
 
 class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
