@@ -7,10 +7,10 @@
 
 from django.apps import apps
 from django.db import transaction
-from django.db.models import Max
+from django.db.models import Max, Count, PositiveIntegerField
 
 from django.utils.translation import gettext as _
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from taiga.base import filters as base_filters
 from taiga.base import exceptions as exc
@@ -44,6 +44,7 @@ from . import permissions
 from . import serializers
 from . import services
 from . import validators
+from ..models import UserStoryStatus
 
 
 class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
@@ -522,3 +523,22 @@ class UserStoryVotersViewSet(VotersViewSetMixin, ModelListViewSet):
 class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.UserStoryWatchersPermission,)
     resource_model = models.UserStory
+
+
+def hourly_pending_work(request):
+    project = Project.objects.filter(name='adkrity').last()
+
+    try:
+        data = models.UserStory.objects.filter(project=project, is_closed=False).values('status__name').annotate(
+                count=Count('id')).order_by('status').values('status__name', 'count')
+
+        pending_work = {f.name: 0 for f in models.UserStoryHourlyPendingWork._meta.get_fields() if isinstance(f, PositiveIntegerField)}
+
+        for item in data:
+            field = item["status__name"].lower().strip().replace(' ','_')
+            pending_work[field] = item['count']
+
+        models.UserStoryHourlyPendingWork.objects.create(**pending_work)
+        return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
+    except Exception as e:
+        return JsonResponse({"Error": f"{e}"})

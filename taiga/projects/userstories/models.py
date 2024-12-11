@@ -190,3 +190,27 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
 
     def get_roles(self):
         return self.project.roles.filter(computable=True).all()
+
+
+class UserStoryHourlyPendingWork(models.Model):
+    datetime = models.DateTimeField(auto_now_add=True)
+    onboarding_call = models.PositiveIntegerField(default=0)
+    client_req_pending = models.PositiveIntegerField(default=0)
+    missing_req = models.PositiveIntegerField(default=0)
+    client_req_done = models.PositiveIntegerField(default=0)
+    req_review_pending = models.PositiveIntegerField(default=0)
+    design_req_done = models.PositiveIntegerField(default=0)
+    in_designing = models.PositiveIntegerField(default=0)
+    design_done = models.PositiveIntegerField(default=0)
+    sent_for_approval = models.PositiveIntegerField(default=0)
+    client_changes = models.PositiveIntegerField(default=0)
+    client_confirmation_pending = models.PositiveIntegerField(default=0)
+    design_approved = models.PositiveIntegerField(default=0)
+    ready_to_publish = models.PositiveIntegerField(default=0)
+    ad_support = models.PositiveIntegerField(default=0)
+    ad_issues = models.PositiveIntegerField(default=0)
+    integration_issues = models.PositiveIntegerField(default=0)
+    integration_pending = models.PositiveIntegerField(default=0)
+    ad_published = models.PositiveIntegerField(default=0)
+    ad_changes = models.PositiveIntegerField(default=0)
+    need_optimization = models.PositiveIntegerField(default=0)
