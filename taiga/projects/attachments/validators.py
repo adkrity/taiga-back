@@ -26,11 +26,29 @@ class AttachmentValidator(validators.ModelValidator):
         read_only_fields = ("owner", "created_date", "modified_date", "sha1")
 
 
+class FinalAttachmentValidator(validators.ModelValidator):
+    attached_file = serializers.FileField(required=True)
+
+    class Meta:
+        model = models.FinalAttachment
+        fields = ("id", "project", "owner", "name", "attached_file", "size",
+                  "description", "is_deprecated", "created_date",
+                  "modified_date", "object_id", "order", "sha1", "from_comment")
+        read_only_fields = ("owner", "created_date", "modified_date", "sha1")
+
+
+
 class UpdateAttachmentsOrderBulkValidator(validators.Validator):
     content_type_id = serializers.IntegerField()
     object_id = serializers.IntegerField()
     after_attachment_id = serializers.IntegerField(required=False)
     bulk_attachments = ListField(child=serializers.IntegerField(min_value=1))
+
+    def __init__(self, model, *args, **kwargs):
+        self.model = model
+        if not self.model:
+            raise ValueError("A model must be provided to the validator.")
+        super().__init__(*args, **kwargs)
 
     def validate_after_attachment_id(self, attrs, source):
         if (attrs.get(source, None) is not None
@@ -42,7 +60,8 @@ class UpdateAttachmentsOrderBulkValidator(validators.Validator):
                 "id": attrs[source]
             }
 
-            if not models.Attachment.objects.filter(**filters).exists():
+            # if not models.Attachment.objects.filter(**filters).exists():
+            if not self.model.objects.filter(**filters).exists():
                 raise ValidationError(_("Invalid attachment id to move after. The attachment must belong "
                                         "to the same item (epic, userstory, task, issue or wiki page)."))
 
@@ -57,7 +76,8 @@ class UpdateAttachmentsOrderBulkValidator(validators.Validator):
                 "id__in": attrs[source]
             }
 
-            if models.Attachment.objects.filter(**filters).count() != len(filters["id__in"]):
+            # if models.Attachment.objects.filter(**filters).count() != len(filters["id__in"]):
+            if self.model.objects.filter(**filters).count() != len(filters["id__in"]):
                 raise ValidationError(_("Invalid attachment ids. All attachments must belong to the same "
                                         "item (epic, userstory, task, issue or wiki page)."))
 

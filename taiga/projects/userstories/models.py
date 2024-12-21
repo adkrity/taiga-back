@@ -125,6 +125,7 @@ class UserStory(OCCModelMixin, WatchedModelMixin, BlockedMixin, TaggedMixin, Due
     team_requirement = models.BooleanField(default=False, null=False, blank=True,
                                            verbose_name=_("is team requirement"))
     attachments = GenericRelation("attachments.Attachment")
+    final_attachments = GenericRelation("attachments.FinalAttachment")
     generated_from_issue = models.ForeignKey("issues.Issue", null=True, blank=True,
                                              on_delete=models.SET_NULL,
                                              related_name="generated_user_stories",

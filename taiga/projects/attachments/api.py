@@ -81,7 +81,7 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         data = request.DATA.copy()
         data["content_type_id"] = contenttype.id
 
-        validator = validators.UpdateAttachmentsOrderBulkValidator(data=data)
+        validator = validators.UpdateAttachmentsOrderBulkValidator(data=data, model=self.model)
         if not validator.is_valid():
             return response.BadRequest(validator.errors)
 
@@ -94,8 +94,9 @@ class BaseAttachmentViewSet(HistoryResourceMixin, WatchedResourceMixin,
         # Get after_attachment
         after_attachment = None
         after_attachment_id = data.get("after_attachment_id", None)
+        attachments = item.attachments if self.model.__name__ == "Attachment" else item.final_attachments
         if after_attachment_id is not None:
-            after_attachment = get_object_or_error(item.attachments, request.user, pk=after_attachment_id)
+            after_attachment = get_object_or_error(attachments, request.user, pk=after_attachment_id)
 
         ret = services.update_order_in_bulk(item=item,
                                             after_attachment=after_attachment,
@@ -110,6 +111,14 @@ class EpicAttachmentViewSet(BaseAttachmentViewSet):
 
 
 class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
+    permission_classes = (permissions.UserStoryAttachmentPermission,)
+    filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
+    content_type = "userstories.userstory"
+
+
+class UserStoryFinalAttachmentViewSet(BaseAttachmentViewSet):
+    model = models.FinalAttachment
+    validator_class = validators.FinalAttachmentValidator
     permission_classes = (permissions.UserStoryAttachmentPermission,)
     filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
     content_type = "userstories.userstory"

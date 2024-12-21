@@ -35,3 +35,4 @@ class AttachmentInline(GenericTabularInline):
 
 
 admin.site.register(models.Attachment, AttachmentAdmin)
+admin.site.register(models.FinalAttachment, AttachmentAdmin)

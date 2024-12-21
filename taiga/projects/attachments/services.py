@@ -142,7 +142,13 @@ def update_order_in_bulk(item: Union["Epic", "UserStory", "Task", "Issue", "Wiki
       FROM (VALUES %s) AS tmp (id, new_order)
      WHERE tmp.id = attachments_attachment.id
     """
-
+    if isinstance(after_attachment, models.FinalAttachment):
+        sql = """
+            UPDATE attachments_finalattachment
+               SET "order" = tmp.new_order::BIGINT
+              FROM (VALUES %s) AS tmp (id, new_order)
+             WHERE tmp.id = attachments_finalattachment.id
+            """
     with connection.cursor() as cursor:
         execute_values(cursor, sql, data)
 

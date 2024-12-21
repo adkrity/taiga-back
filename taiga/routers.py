@@ -135,6 +135,7 @@ router.register(r"resolver", ResolverViewSet, base_name="resolver")
 # Attachments
 from taiga.projects.attachments.api import EpicAttachmentViewSet
 from taiga.projects.attachments.api import UserStoryAttachmentViewSet
+from taiga.projects.attachments.api import UserStoryFinalAttachmentViewSet
 from taiga.projects.attachments.api import IssueAttachmentViewSet
 from taiga.projects.attachments.api import TaskAttachmentViewSet
 from taiga.projects.attachments.api import WikiAttachmentViewSet
@@ -143,6 +144,8 @@ router.register(r"epics/attachments", EpicAttachmentViewSet,
                 base_name="epic-attachments")
 router.register(r"userstories/attachments", UserStoryAttachmentViewSet,
                 base_name="userstory-attachments")
+router.register(r"userstories/final-attachments", UserStoryFinalAttachmentViewSet,
+                base_name="userstory-final-attachments")
 router.register(r"tasks/attachments", TaskAttachmentViewSet,
                 base_name="task-attachments")
 router.register(r"issues/attachments", IssueAttachmentViewSet,
