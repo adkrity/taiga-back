@@ -26,6 +26,7 @@ class AttachmentValidator(validators.ModelValidator):
         read_only_fields = ("owner", "created_date", "modified_date", "sha1")
 
 
+# added by prince dated 20/12/2024
 class FinalAttachmentValidator(validators.ModelValidator):
     attached_file = serializers.FileField(required=True)
 
@@ -35,7 +36,7 @@ class FinalAttachmentValidator(validators.ModelValidator):
                   "description", "is_deprecated", "created_date",
                   "modified_date", "object_id", "order", "sha1", "from_comment")
         read_only_fields = ("owner", "created_date", "modified_date", "sha1")
-
+# added by prince end
 
 
 class UpdateAttachmentsOrderBulkValidator(validators.Validator):
@@ -60,6 +61,8 @@ class UpdateAttachmentsOrderBulkValidator(validators.Validator):
                 "id": attrs[source]
             }
 
+            # changed by prince dated 20/12/2024
+
             # if not models.Attachment.objects.filter(**filters).exists():
             if not self.model.objects.filter(**filters).exists():
                 raise ValidationError(_("Invalid attachment id to move after. The attachment must belong "
@@ -75,6 +78,8 @@ class UpdateAttachmentsOrderBulkValidator(validators.Validator):
                 "object_id": attrs["object_id"],
                 "id__in": attrs[source]
             }
+
+            # changed by prince dated 20/12/2024
 
             # if models.Attachment.objects.filter(**filters).count() != len(filters["id__in"]):
             if self.model.objects.filter(**filters).count() != len(filters["id__in"]):

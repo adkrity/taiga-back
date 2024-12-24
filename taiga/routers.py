@@ -144,8 +144,12 @@ router.register(r"epics/attachments", EpicAttachmentViewSet,
                 base_name="epic-attachments")
 router.register(r"userstories/attachments", UserStoryAttachmentViewSet,
                 base_name="userstory-attachments")
+
+# added by prince dated 20/12/2024
 router.register(r"userstories/final-attachments", UserStoryFinalAttachmentViewSet,
                 base_name="userstory-final-attachments")
+#added by prince end
+
 router.register(r"tasks/attachments", TaskAttachmentViewSet,
                 base_name="task-attachments")
 router.register(r"issues/attachments", IssueAttachmentViewSet,

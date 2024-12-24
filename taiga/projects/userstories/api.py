@@ -523,7 +523,7 @@ class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     permission_classes = (permissions.UserStoryWatchersPermission,)
     resource_model = models.UserStory
 
-
+# added by prince
 def hourly_pending_work(request):
     project = Project.objects.filter(name='adkrity').last()
 
@@ -541,3 +541,4 @@ def hourly_pending_work(request):
         return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
     except Exception as e:
         return JsonResponse({"Error": f"{e}"})
+# added by prince end

@@ -116,12 +116,14 @@ class UserStoryAttachmentViewSet(BaseAttachmentViewSet):
     content_type = "userstories.userstory"
 
 
+# added by prince dated 20/12/2024
 class UserStoryFinalAttachmentViewSet(BaseAttachmentViewSet):
     model = models.FinalAttachment
     validator_class = validators.FinalAttachmentValidator
     permission_classes = (permissions.UserStoryAttachmentPermission,)
     filter_backends = (filters.CanViewUserStoryAttachmentFilterBackend,)
     content_type = "userstories.userstory"
+# added by prince end
 
 
 class IssueAttachmentViewSet(BaseAttachmentViewSet):

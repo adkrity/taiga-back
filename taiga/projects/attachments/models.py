@@ -22,8 +22,10 @@ def get_attachment_file_path(instance, filename):
     return get_file_path(instance, filename, "attachments")
 
 
+# added by prince dated 20/12/2024
 def get_final_design_file_path(instance, filename):
     return get_file_path(instance, filename, "designs")
+# added by prince end
 
 
 class Attachment(models.Model):
@@ -108,6 +110,7 @@ class Attachment(models.Model):
         return "Attachment: {}".format(self.id)
 
 
+# added by prince dated 20/12/2024
 class FinalAttachment(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -188,3 +191,4 @@ class FinalAttachment(models.Model):
 
     def __str__(self):
         return "Final Design: {}".format(self.id)
+# added by prince end
