@@ -7,7 +7,7 @@
 
 from django.apps import apps
 from django.db import transaction
-from django.db.models import Max, Count, PositiveIntegerField
+from django.db.models import Max, Count, PositiveIntegerField, Q
 
 from django.utils.translation import gettext as _
 from django.http import HttpResponse, JsonResponse
@@ -528,7 +528,7 @@ def hourly_pending_work(request):
     project = Project.objects.filter(name='adkrity').last()
 
     try:
-        data = models.UserStory.objects.filter(project=project, is_closed=False).values('status__name').annotate(
+        data = models.UserStory.objects.filter(~Q(tags__icontains="testing-ad-ignore"),project=project, is_closed=False).values('status__name').annotate(
                 count=Count('id')).order_by('status').values('status__name', 'count')
 
         pending_work = {f.name: 0 for f in models.UserStoryHourlyPendingWork._meta.get_fields() if isinstance(f, PositiveIntegerField)}
