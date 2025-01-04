@@ -525,7 +525,7 @@ class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
 
 # added by prince
 def hourly_pending_work(request):
-    project = Project.objects.filter(name='adkrity').last()
+    project = Project.objects.filter(name__iexact='adkrity').last()
 
     try:
         data = models.UserStory.objects.filter(~Q(tags__icontains="testing-ad-ignore"),project=project, is_closed=False).values('status__name').annotate(

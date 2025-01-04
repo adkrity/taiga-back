@@ -143,9 +143,9 @@ def attach_epic_order(queryset, epic_id, as_field="epic_order"):
 
 
 def attach_extra_info(queryset, user=None, include_attachments=False, include_tasks=False, epic_id=None):
-    queryset = attach_total_points(queryset)
-    queryset = attach_role_points(queryset)
-    queryset = attach_epics(queryset)
+    # queryset = attach_total_points(queryset) #by Jay to decrease query load
+    # queryset = attach_role_points(queryset) #by Jay to decrease query load
+    # queryset = attach_epics(queryset)
 
     if include_attachments:
         queryset = attach_basic_attachments(queryset)
@@ -160,11 +160,11 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
         queryset = queryset.extra(select={"include_epic_order": "True"})
 
     queryset = attach_total_attachments(queryset)
-    queryset = attach_total_voters_to_queryset(queryset)
-    queryset = attach_watchers_to_queryset(queryset)
-    queryset = attach_total_watchers_to_queryset(queryset)
-    queryset = attach_is_voter_to_queryset(queryset, user)
-    queryset = attach_is_watcher_to_queryset(queryset, user)
+    # queryset = attach_total_voters_to_queryset(queryset) #by Jay to decrease query load
+    queryset = attach_watchers_to_queryset(queryset) #by Jay to decrease query load
+    queryset = attach_total_watchers_to_queryset(queryset) #by Jay to decrease query load
+    # queryset = attach_is_voter_to_queryset(queryset, user) #by Jay to decrease query load
+    queryset = attach_is_watcher_to_queryset(queryset, user) #by Jay to decrease query load
     queryset = attach_total_comments_to_queryset(queryset)
     return queryset
 

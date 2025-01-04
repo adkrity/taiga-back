@@ -107,6 +107,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         return obj.epic_order
 
     def get_epics(self, obj):
+        return []
         assert hasattr(obj, "epics_attr"), "instance must have a epics_attr attribute"
         return obj.epics_attr
 
@@ -117,10 +118,12 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         return obj.milestone.name if obj.milestone else None
 
     def get_total_points(self, obj):
+        return 0
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
         return obj.total_points_attr
 
     def get_points(self, obj):
+        return 0
         assert hasattr(obj, "role_points_attr"), "instance must have a role_points_attr attribute"
         if obj.role_points_attr is None:
             return {}
