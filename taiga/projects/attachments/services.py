@@ -104,6 +104,8 @@ def update_order_in_bulk(item: Union["Epic", "UserStory", "Task", "Issue", "Wiki
 
     # get item attachments
     attachments = item.attachments.all()
+    if isinstance(after_attachment, models.FinalAttachment):
+        attachments = item.final_attachments.all()
 
     # exclude moved attachments
     attachments = attachments.exclude(id__in=bulk_attachments)

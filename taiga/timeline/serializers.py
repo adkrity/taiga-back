@@ -63,6 +63,10 @@ class TimelineSerializer(serializers.LightSerializer):
             [[self.parse_url(item) for item in value] for key, value in
              obj.data["values_diff"]["attachments"].items() if value]
 
+        if "values_diff" in obj.data and "final_attachments" in obj.data["values_diff"]:
+            [[self.parse_url(item) for item in value] for key, value in
+             obj.data["values_diff"]["final_attachments"].items() if value]
+
         return obj.data
 
     def parse_url(self, item):
@@ -71,7 +75,7 @@ class TimelineSerializer(serializers.LightSerializer):
         else:
             # This is the case for old timeline entries
             file_path = urlparse(item['url']).path
-            index = file_path.find('/attachments')
+            index = file_path.find('/attachments') or file_path.find('/designs')
             attached_file = file_path[index+1:]
 
         item['url'] = default_storage.url(attached_file)

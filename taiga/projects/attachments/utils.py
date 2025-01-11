@@ -54,3 +54,51 @@ def attach_basic_attachments(queryset, as_field="attachments_attr"):
     sql = sql.format(tbl=model._meta.db_table, type_id=type.id)
     queryset = queryset.extra(select={as_field: sql})
     return queryset
+
+
+def attach_total_final_attachments(queryset, as_field="total_final_attachments"):
+    """Attach attachment count to each object of the queryset.
+
+    :param queryset: A Django queryset object.
+    :param as_field: Attach the attachments count as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+    model = queryset.model
+    type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
+    sql = """SELECT count(*)
+                  FROM attachments_finalattachment
+                 WHERE attachments_finalattachment.content_type_id = {type_id}
+                   AND attachments_finalattachment.object_id = {tbl}.id"""
+
+    sql = sql.format(type_id=type.id, tbl=model._meta.db_table)
+    qs = queryset.extra(select={as_field: sql})
+    return qs
+
+
+def attach_basic_final_attachments(queryset, as_field="final_attachments_attr"):
+    """Attach basic attachments info as json column to each object of the queryset.
+
+    :param queryset: A Django user stories queryset object.
+    :param as_field: Attach the role points as an attribute with this name.
+
+    :return: Queryset object with the additional `as_field` field.
+    """
+
+    model = queryset.model
+    type = apps.get_model("contenttypes", "ContentType").objects.get_for_model(model)
+
+    sql = """SELECT json_agg(row_to_json(t))
+                FROM(
+                    SELECT
+                        attachments_finalattachment.id,
+                        attachments_finalattachment.attached_file
+                    FROM attachments_finalattachment
+                    WHERE attachments_finalattachment.object_id = {tbl}.id
+                     AND  attachments_finalattachment.content_type_id = {type_id}
+                     AND  attachments_finalattachment.is_deprecated = False
+                    ORDER BY attachments_finalattachment.order, attachments_finalattachment.created_date, attachments_finalattachment.id) t"""
+
+    sql = sql.format(tbl=model._meta.db_table, type_id=type.id)
+    queryset = queryset.extra(select={as_field: sql})
+    return queryset

@@ -507,7 +507,7 @@ def userstories_to_csv(project, queryset):
 
     fieldnames += ["backlog_order", "sprint_order", "kanban_order",
                    "created_date", "modified_date", "finish_date",
-                   "client_requirement", "team_requirement", "attachments",
+                   "client_requirement", "team_requirement", "attachments","final_attachments",
                    "generated_from_issue", "generated_from_task", "from_task_ref",
                    "external_reference", "tasks", "tags", "watchers", "voters",
                    "due_date", "due_date_reason", "epics"]
@@ -522,6 +522,7 @@ def userstories_to_csv(project, queryset):
                                          "tasks",
                                          "epics",
                                          "attachments",
+                                         "final_attachments",
                                          "custom_attributes_values")
     queryset = queryset.select_related("milestone",
                                        "project",
@@ -571,6 +572,7 @@ def userstories_to_csv(project, queryset):
             "client_requirement": us.client_requirement,
             "team_requirement": us.team_requirement,
             "attachments": us.attachments.count(),
+            "final_attachments": us.final_attachments.count(),
             "generated_from_issue": us.generated_from_issue.ref if
             us.generated_from_issue else None,
             "generated_from_task": us.generated_from_task.ref if

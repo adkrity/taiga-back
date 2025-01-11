@@ -111,7 +111,7 @@ class HistoryDiffField(Field):
 
         ret = {}
         for key, val in value.items():
-            if key in ["attachments", "custom_attributes", "description_diff"]:
+            if key in ["attachments", "final_attachments", "custom_attributes", "description_diff"]:
                 ret[key] = val
             elif key == "points":
                 ret[key] = {k: {"from": v[0], "to": v[1]} for k, v in val.items()}
@@ -501,8 +501,6 @@ class EpicSerializer(CustomAttributesValuesWebhookSerializerMixin, serializers.L
     status = EpicStatusSerializer()
     epics_order = Field()
     color = Field()
-    client_requirement = Field()
-    team_requirement = Field()
     client_requirement = Field()
     team_requirement = Field()
 

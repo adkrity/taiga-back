@@ -10,7 +10,8 @@ from taiga.base.fields import Field, MethodField
 from taiga.base.neighbors import NeighborsSerializerMixin
 
 from taiga.mdrender.service import render as mdrender
-from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin
+from taiga.projects.attachments.serializers import BasicAttachmentsInfoSerializerMixin, \
+    FinalBasicAttachmentsInfoSerializerMixin
 from taiga.projects.due_dates.serializers import DueDateSerializerMixin
 from taiga.projects.mixins.serializers import AssignedToExtraInfoSerializerMixin
 from taiga.projects.mixins.serializers import OwnerExtraInfoSerializerMixin
@@ -38,6 +39,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
         VoteResourceSerializerMixin, WatchedResourceSerializer,
         OwnerExtraInfoSerializerMixin, AssignedToExtraInfoSerializerMixin,
         StatusExtraInfoSerializerMixin, BasicAttachmentsInfoSerializerMixin,
+                              FinalBasicAttachmentsInfoSerializerMixin,
         TaggedInProjectResourceSerializer, TotalCommentsSerializerMixin,
         DueDateSerializerMixin, serializers.LightSerializer):
 
@@ -75,6 +77,7 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epic_order = MethodField()
     tasks = MethodField()
     total_attachments = Field()
+    total_final_attachments = Field()
     swimlane = Field(attr="swimlane_id")
 
     assigned_users = MethodField()
