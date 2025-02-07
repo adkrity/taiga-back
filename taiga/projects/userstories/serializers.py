@@ -66,7 +66,8 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     external_reference = Field()
     tribe_gig = Field()
     version = Field()
-    watchers = Field()
+    # watchers = Field()
+    watchers = MethodField() # added by prince to decrease load
     is_blocked = Field()
     blocked_note = Field()
     total_points = MethodField()
@@ -76,8 +77,8 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
     epics = MethodField()
     epic_order = MethodField()
     tasks = MethodField()
-    total_attachments = Field()
-    total_final_attachments = Field()
+    # total_attachments = Field()
+    # total_final_attachments = Field()
     swimlane = Field(attr="swimlane_id")
 
     assigned_users = MethodField()
@@ -97,6 +98,10 @@ class UserStoryListSerializer(ProjectExtraInfoSerializerMixin,
             return None
 
         return set(assigned_users)
+
+    # added by prince to decrease query loads
+    def get_watchers(self, obj):
+        return []
 
     def get_epic_order(self, obj):
         include_epic_order = getattr(obj, "include_epic_order", False)
