@@ -6,7 +6,9 @@
 # Copyright (c) 2021-present Kaleidos INC
 
 from taiga.projects.attachments.utils import attach_basic_attachments
+from taiga.projects.attachments.utils import attach_basic_final_attachments
 from taiga.projects.attachments.utils import attach_total_attachments
+from taiga.projects.attachments.utils import attach_total_final_attachments
 from taiga.projects.notifications.utils import attach_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_total_watchers_to_queryset
 from taiga.projects.notifications.utils import attach_is_watcher_to_queryset
@@ -149,6 +151,7 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
 
     if include_attachments:
         queryset = attach_basic_attachments(queryset)
+        queryset = attach_basic_final_attachments(queryset)
         queryset = queryset.extra(select={"include_attachments": "True"})
 
     if include_tasks and False: #by Jay to decrease query load
@@ -160,6 +163,7 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
         queryset = queryset.extra(select={"include_epic_order": "True"})
 
     queryset = attach_total_attachments(queryset)
+    queryset = attach_total_final_attachments(queryset)
     # queryset = attach_total_voters_to_queryset(queryset) #by Jay to decrease query load
     queryset = attach_watchers_to_queryset(queryset) #by Jay to decrease query load
     queryset = attach_total_watchers_to_queryset(queryset) #by Jay to decrease query load

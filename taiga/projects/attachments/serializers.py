@@ -77,3 +77,28 @@ class BasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):
             at["thumbnail_card_url"] = get_thumbnail_url(at["attached_file"], settings.THN_ATTACHMENT_CARD)
 
         return obj.attachments_attr
+
+
+class FinalBasicAttachmentsInfoSerializerMixin(serializers.LightSerializer):
+    """
+    Assumptions:
+    - The queryset has an attribute called "include_attachments" indicating if the final attachments array should contain information
+        about the related elements, otherwise it will be empty
+    - The method attach_basic_final_attachments has been used to include the necessary
+        json data about the final attachments in the "final_attachments_attr" column
+    """
+    final_attachments = MethodField()
+
+    def get_final_attachments(self, obj):
+        include_attachments = getattr(obj, "include_attachments", False)
+
+        if include_attachments:
+            assert hasattr(obj, "final_attachments_attr"), "instance must have a final_attachments_attr attribute"
+
+        if not include_attachments or obj.final_attachments_attr is None:
+            return []
+
+        for at in obj.final_attachments_attr:
+            at["thumbnail_card_url"] = get_thumbnail_url(at["attached_file"], settings.THN_ATTACHMENT_CARD)
+
+        return obj.final_attachments_attr

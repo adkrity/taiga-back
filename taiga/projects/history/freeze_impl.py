@@ -206,6 +206,22 @@ def extract_attachments(obj) -> list:
 
 
 @as_tuple
+def extract_final_attachments(obj) -> list:
+    for attach in obj.final_attachments.all():
+        # Force the creation of a thumbnail for the timeline
+        thumbnail_file = get_timeline_image_thumbnail_name(attach)
+
+        yield {"id": attach.id,
+               "filename": os.path.basename(attach.attached_file.name),
+               "url": attach.attached_file.url,
+               "attached_file": str(attach.attached_file),
+               "thumbnail_file": thumbnail_file,
+               "is_deprecated": attach.is_deprecated,
+               "description": attach.description,
+               "order": attach.order}
+
+
+@as_tuple
 def extract_epic_custom_attributes(obj) -> list:
     with suppress(ObjectDoesNotExist):
         custom_attributes_values = obj.custom_attributes_values.attributes_values
@@ -357,6 +373,7 @@ def userstory_freezer(us) -> dict:
         "client_requirement": us.client_requirement,
         "team_requirement": us.team_requirement,
         "attachments": extract_attachments(us),
+        "final_attachments": extract_final_attachments(us),
         "tags": us.tags,
         "points": points,
         "from_issue": us.generated_from_issue_id,

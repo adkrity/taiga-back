@@ -237,6 +237,37 @@ class HistoryEntry(models.Model):
                 if attachments["new"] or attachments["changed"] or attachments["deleted"]:
                     value = attachments
 
+            elif key == "final_attachments":
+                attachments = {
+                    "new": [],
+                    "changed": [],
+                    "deleted": [],
+                }
+
+                oldattachs = {x["id"]: x for x in self.diff["final_attachments"][0]}
+                newattachs = {x["id"]: x for x in self.diff["final_attachments"][1]}
+
+                for aid in set(tuple(oldattachs.keys()) + tuple(newattachs.keys())):
+                    if aid in oldattachs and aid in newattachs:
+                        changes = make_diff_from_dicts(oldattachs[aid], newattachs[aid],
+                                                       excluded_keys=("filename", "url", "thumb_url", "order"))
+
+                        if changes:
+                            change = {
+                                "filename": newattachs.get(aid, {}).get("filename", ""),
+                                "url": newattachs.get(aid, {}).get("url", ""),
+                                "thumb_url": newattachs.get(aid, {}).get("thumb_url", ""),
+                                "changes": changes
+                            }
+                            attachments["changed"].append(change)
+                    elif aid in oldattachs and aid not in newattachs:
+                        attachments["deleted"].append(oldattachs[aid])
+                    elif aid not in oldattachs and aid in newattachs:
+                        attachments["new"].append(newattachs[aid])
+
+                if attachments["new"] or attachments["changed"] or attachments["deleted"]:
+                    value = attachments
+
             elif key == "custom_attributes":
                 custom_attributes = {
                     "new": [],
