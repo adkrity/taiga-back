@@ -151,7 +151,7 @@ def attach_extra_info(queryset, user=None, include_attachments=False, include_ta
         queryset = attach_basic_attachments(queryset)
         queryset = queryset.extra(select={"include_attachments": "True"})
 
-    if include_tasks:
+    if include_tasks and False: #by Jay to decrease query load
         queryset = attach_tasks(queryset)
         queryset = queryset.extra(select={"include_tasks": "True"})
 
