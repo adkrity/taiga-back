@@ -11,6 +11,7 @@ from django.db.models import Max, Count, PositiveIntegerField, Q
 
 from django.utils.translation import gettext as _
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import get_user_model
 
 from taiga.base import filters as base_filters
 from taiga.base import exceptions as exc
@@ -37,6 +38,7 @@ from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
+from taiga.projects.userstories.models import UserStory
 
 from . import filters
 from . import models
@@ -44,6 +46,10 @@ from . import permissions
 from . import serializers
 from . import services
 from . import validators
+import os
+import shutil
+
+User = get_user_model()
 
 
 class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
@@ -546,4 +552,37 @@ def hourly_pending_work(request):
         return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
     except Exception as e:
         return JsonResponse({"Error": f"{e}"})
+# added by prince end
+
+
+# added by prince dated 08/02/2024
+def delete_user_stories_reference_images(request, user_story_id):
+    try:
+        attachment_owner = User.objects.filter(username__in=['serveradmin, jaypatel'])
+        # attachment_owner = User.objects.filter(username__in=['admin']) # local testing
+        print("attachment owner", attachment_owner)
+
+        user_story = UserStory.objects.get(id=user_story_id)
+        attachments = user_story.attachments.filter(owner__in=attachment_owner)
+
+        for attachment in attachments:
+            if attachment.attached_file:
+                file_path = attachment.attached_file.path
+                folder = os.path.dirname(file_path)
+                if os.path.exists(folder):
+                    try:
+                        shutil.rmtree(folder)
+                        print(f"Deleted folder: {folder}")
+                    except Exception as e:
+                        print(f"Error deleting folder {folder}: {e}")
+
+        count, _ = attachments.delete()
+        print("number of attachments", count)
+
+        return JsonResponse({"Success": f"{count} deleted successfully!"})
+
+    except Exception as e:
+        return JsonResponse({"Fail": str(e)})
+
+    return
 # added by prince end
