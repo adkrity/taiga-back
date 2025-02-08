@@ -117,6 +117,11 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         if self.action == "list" and self.request.QUERY_PARAMS.get('dashboard', False):
             return qs
 
+        # added by Jay remove attachment, comments, watchers count
+        if self.action == "list":
+            return qs
+        # added by Jay end
+
         qs = qs.select_related("milestone",
                                "owner",
                                "generated_from_issue",
