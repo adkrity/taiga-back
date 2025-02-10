@@ -39,6 +39,7 @@ from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
 from taiga.projects.userstories.models import UserStory, RolePoints
+from taiga.projects.notifications.models import Watched
 
 from . import filters
 from . import models
@@ -48,8 +49,6 @@ from . import services
 from . import validators
 import os
 import shutil
-
-from ..notifications.models import Watched
 
 User = get_user_model()
 
