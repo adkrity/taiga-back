@@ -38,7 +38,7 @@ from taiga.projects.tagging.api import TaggedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
-from taiga.projects.userstories.models import UserStory
+from taiga.projects.userstories.models import UserStory, RolePoints
 
 from . import filters
 from . import models
@@ -48,6 +48,8 @@ from . import services
 from . import validators
 import os
 import shutil
+
+from ..notifications.models import Watched
 
 User = get_user_model()
 
@@ -563,6 +565,10 @@ def delete_user_stories_reference_images(request, user_story_id):
         print("attachment owner", attachment_owner)
 
         user_story = UserStory.objects.get(id=user_story_id)
+        user_story.assigned_users.clear()
+        Watched.objects.filter(object_id=user_story_id).delete()
+        RolePoints.objects.filter(user_story=user_story).delete()
+
         attachments = user_story.attachments.filter(owner__in=attachment_owner)
 
         for attachment in attachments:
