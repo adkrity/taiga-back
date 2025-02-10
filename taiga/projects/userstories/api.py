@@ -559,7 +559,7 @@ def hourly_pending_work(request):
 # added by prince dated 08/02/2024
 def delete_user_stories_reference_images(request, user_story_id):
     try:
-        attachment_owner = User.objects.filter(username__in=['serveradmin, jaypatel'])
+        attachment_owner = User.objects.filter(username__in=['serveradmin', 'jaypatel'])
         # attachment_owner = User.objects.filter(username__in=['admin']) # local testing
         print("attachment owner", attachment_owner)
 
