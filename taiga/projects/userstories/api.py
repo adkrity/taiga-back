@@ -39,7 +39,9 @@ from taiga.projects.votes.mixins.viewsets import VotedResourceMixin
 from taiga.projects.votes.mixins.viewsets import VotersViewSetMixin
 from taiga.projects.userstories.utils import attach_extra_info
 from taiga.projects.userstories.models import UserStory, RolePoints
-from taiga.projects.notifications.models import Watched
+from taiga.projects.notifications.models import Watched, WebNotification
+from taiga.timeline.models import Timeline
+from taiga.projects.date_utils import _get_relative_date
 
 from . import filters
 from . import models
@@ -590,4 +592,15 @@ def delete_user_stories_reference_images(request, user_story_id):
         return JsonResponse({"Fail": str(e)})
 
     return
+# added by prince end
+
+
+# added by prince dated 11/02/2024
+def database_old_data_clean_up():
+    cutoff_date = _get_relative_date(-30)
+
+    Timeline.objects.filter(created__lte=cutoff_date).delete()
+    WebNotification.objects.filter(created__lte=cutoff_date).delete()
+
+    return True
 # added by prince end
