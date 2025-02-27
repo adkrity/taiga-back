@@ -66,8 +66,7 @@ class UserStoryAdmin(admin.ModelAdmin):
 
 class UserStoryHourlyPendingWorkAdmin(admin.ModelAdmin):
     list_display = [field.name for field in models.UserStoryHourlyPendingWork._meta.get_fields() if field.name not in (
-    'id', 'onboarding_call', 'sent_for_approval', 'client_confirmation_pending', 'integration_issues',
-    'integration_pending', 'client_req_pending', 'missing_req')]
+    'id', 'onboarding_call', 'sent_for_approval', 'client_confirmation_pending', 'client_req_pending', 'missing_req')]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
 admin.site.register(models.RolePoints, RolePointsAdmin)
