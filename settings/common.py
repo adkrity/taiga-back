@@ -20,9 +20,6 @@ ADMINS = (
     ("Jay", "jaypatel16@gmail.com"),
 )
 
-#ADMINS = (
-#)
-
 DEBUG = False
 
 DATABASES = {
@@ -35,6 +32,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'taiga_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 
 #DATABASES = {
 #    "default": {
@@ -353,6 +361,7 @@ INSTALLED_APPS = [
     "taiga.projects.milestones",
     "taiga.projects.epics",
     "taiga.projects.userstories",
+    "taiga.projects.adkrity",
     "taiga.projects.tasks",
     "taiga.projects.issues",
     "taiga.projects.wiki",

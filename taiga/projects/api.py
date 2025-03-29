@@ -111,7 +111,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         elif self.request.QUERY_PARAMS.get('slight', False):
             qs = project_utils.attach_basic_info(qs, user=self.request.user)
         else:
-            qs = project_utils.attach_extra_info(qs, user=self.request.user)
+            qs = project_utils.attach_extra_info(qs, request=self.request)
 
         # If filtering an activity period we must exclude the activities not updated recently enough
         now = timezone.now()

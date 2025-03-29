@@ -64,10 +64,10 @@ class UserStoryAdmin(admin.ModelAdmin):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
-class UserStoryHourlyPendingWorkAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in models.UserStoryHourlyPendingWork._meta.get_fields() if field.name not in (
-    'id', 'onboarding_call', 'sent_for_approval', 'client_confirmation_pending', 'client_req_pending', 'missing_req')]
+# class UserStoryHourlyPendingWorkAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in models.UserStoryHourlyPendingWork._meta.get_fields() if field.name not in (
+#     'id', 'onboarding_call', 'sent_for_approval', 'client_confirmation_pending', 'client_req_pending', 'missing_req')]
 
 admin.site.register(models.UserStory, UserStoryAdmin)
 admin.site.register(models.RolePoints, RolePointsAdmin)
-admin.site.register(models.UserStoryHourlyPendingWork, UserStoryHourlyPendingWorkAdmin)
+# admin.site.register(models.UserStoryHourlyPendingWork, UserStoryHourlyPendingWorkAdmin)

@@ -11,6 +11,9 @@ from django.db.models import Q, OuterRef, Subquery
 from django.utils.translation import gettext as _
 
 from taiga.base import filters
+from settings.constants import DESIGNER_TEAM, DESIGNER_STATUS_LIST, AD_PUBLISH_TEAM, AD_PUBLISH_STATUS_LIST, ADKRITY_PROJECT_ID
+from taiga.projects.models import Membership
+from taiga.projects.adkrity.models import ProjectRoleUserStoryStatusMapping
 
 
 def get_assigned_users_filter(model, value):
@@ -49,6 +52,22 @@ class UserStoryStatusesFilter(filters.StatusesFilter):
         if project_id:
             queryset = queryset.filter(status__project_id=project_id)
 
+        # added condition to filter userstories based on status allowed for different teams
+        if project_id == ADKRITY_PROJECT_ID:
+            user = request.user
+            user_membership = Membership.objects.filter(project_id=project_id, user=user).last()
+            user_role = user_membership.role if user_membership else None
+
+            status_list = list(
+                ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).values_list(
+                    'allowed_statuses', flat=True))
+            # if request.user.username in DESIGNER_TEAM:
+            #     queryset = queryset.filter(status__name__in=DESIGNER_STATUS_LIST)
+            # elif request.user.username in AD_PUBLISH_TEAM:
+            #     queryset = queryset.filter(status__name__in=AD_PUBLISH_STATUS_LIST)
+
+            if status_list:
+                queryset = queryset.filter(status__in=status_list)
         return super().filter_queryset(request, queryset, view)
 
 

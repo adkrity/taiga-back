@@ -538,23 +538,23 @@ class UserStoryWatchersViewSet(WatchersViewSetMixin, ModelListViewSet):
     resource_model = models.UserStory
 
 # added by prince
-def hourly_pending_work(request):
-    project = Project.objects.filter(name__iexact='adkrity').last()
-
-    try:
-        data = models.UserStory.objects.filter(~Q(tags__icontains="testing-ad-ignore"),project=project, is_closed=False).values('status__name').annotate(
-                count=Count('id')).order_by('status').values('status__name', 'count')
-
-        pending_work = {f.name: 0 for f in models.UserStoryHourlyPendingWork._meta.get_fields() if isinstance(f, PositiveIntegerField)}
-
-        for item in data:
-            field = item["status__name"].lower().strip().replace(' ','_')
-            pending_work[field] = item['count']
-
-        models.UserStoryHourlyPendingWork.objects.create(**pending_work)
-        return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
-    except Exception as e:
-        return JsonResponse({"Error": f"{e}"})
+# def hourly_pending_work(request):
+#     project = Project.objects.filter(name__iexact='adkrity').last()
+#
+#     try:
+#         data = models.UserStory.objects.filter(~Q(tags__icontains="testing-ad-ignore"),project=project, is_closed=False).values('status__name').annotate(
+#                 count=Count('id')).order_by('status').values('status__name', 'count')
+#
+#         pending_work = {f.name: 0 for f in models.UserStoryHourlyPendingWork._meta.get_fields() if isinstance(f, PositiveIntegerField)}
+#
+#         for item in data:
+#             field = item["status__name"].lower().strip().replace(' ','_')
+#             pending_work[field] = item['count']
+#
+#         models.UserStoryHourlyPendingWork.objects.create(**pending_work)
+#         return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
+#     except Exception as e:
+#         return JsonResponse({"Error": f"{e}"})
 # added by prince end
 
 

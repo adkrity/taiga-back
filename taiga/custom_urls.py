@@ -1,7 +1,8 @@
 #added by prince dated 24/12/2024
 
 from django.urls import path
-from taiga.projects.userstories.api import hourly_pending_work, delete_user_stories_reference_images
+from taiga.projects.userstories.api import  delete_user_stories_reference_images
+from taiga.projects.adkrity.views import hourly_pending_work
 
 urlpatterns = [
     path('hourly-pending-work/update/', hourly_pending_work, name='hourly_pending_work'),

@@ -331,7 +331,7 @@ class Role(models.Model):
         unique_together = (("slug", "project"),)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.project}"
 
 
 class AuthData(models.Model):

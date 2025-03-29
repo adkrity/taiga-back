@@ -69,6 +69,8 @@ class UserStoryCustomAttribute(AbstractCustomAttribute):
         verbose_name = "user story custom attribute"
         verbose_name_plural = "user story custom attributes"
 
+    def __str__(self):
+        return f"{self.name} - {self.project}"
 
 class TaskCustomAttribute(AbstractCustomAttribute):
     class Meta(AbstractCustomAttribute.Meta):

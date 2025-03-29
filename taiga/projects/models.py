@@ -622,7 +622,7 @@ class UserStoryStatus(models.Model):
         unique_together = (("project", "name"), ("project", "slug"))
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.project}"
 
     def save(self, *args, **kwargs):
         qs = self.project.us_statuses

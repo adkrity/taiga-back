@@ -5,6 +5,9 @@
 #
 # Copyright (c) 2021-present Kaleidos INC
 
+from settings.constants import DESIGNER_ROLE_LIST, AD_PUBLISH_ROLE_LIST, DESIGNER_STATUS_LIST, AD_PUBLISH_STATUS_LIST, AD_PUBLISH_FIELD_LIST, DESIGNER_FIELD_LIST, ADKRITY_PROJECT_ID
+from taiga.projects.adkrity.models import ProjectRoleUserStoryCustomAttributeMapping, ProjectRoleUserStoryStatusMapping
+
 def attach_members(queryset, as_field="members_attr"):
     """Attach a json members representation to each object of the queryset.
 
@@ -154,10 +157,57 @@ def attach_swimlanes(queryset, as_field="swimlanes_attr"):
     return queryset
 
 
-def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
+# probable requested_url_sub_path ["by_slug?slug=admin-adkrity", "3/tags_colors"]
+def get_project_id_by_url_sub_path(queryset, requested_url_sub_path):
+    if 'slug' in requested_url_sub_path:
+        project_slug_name = requested_url_sub_path.split("=")[-1]
+        project_id = queryset.get(slug=project_slug_name).id
+    else:
+        project_id_in_url = requested_url_sub_path.split("/")[1]
+        project_id = queryset.get(id=project_id_in_url).id
+    return project_id
+
+
+def get_user_role_for_project(project_queryset, user, project_id):
+    project = project_queryset.get(id=project_id)
+    membership = project.memberships.filter(user=user).first()
+    user_role = None
+    if membership:
+        # user_role = membership.role.name
+        user_role = membership.role
+
+    return user_role
+
+
+# def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
+#     """Attach a json userstory statuses representation to each object of the queryset.
+#
+#     :param queryset: A Django projects queryset object.
+#     :param as_field: Attach the userstory statuses as an attribute with this name.
+#
+#     :return: Queryset object with the additional `as_field` field.
+#     """
+#     model = queryset.model
+#     sql = """
+#              SELECT json_agg(
+#                         row_to_json(projects_userstorystatus)
+#                         ORDER BY projects_userstorystatus.order
+#                     )
+#                FROM projects_userstorystatus
+#               WHERE projects_userstorystatus.project_id = {tbl}.id
+#           """
+#
+#     sql = sql.format(tbl=model._meta.db_table)
+#     queryset = queryset.extra(select={as_field: sql})
+#     return queryset
+
+
+def attach_userstory_statuses(queryset, user, project_id, as_field="userstory_statuses_attr"):
     """Attach a json userstory statuses representation to each object of the queryset.
 
     :param queryset: A Django projects queryset object.
+    :param user: A user from whom request is coming
+    :param project_id: A project id
     :param as_field: Attach the userstory statuses as an attribute with this name.
 
     :return: Queryset object with the additional `as_field` field.
@@ -173,7 +223,56 @@ def attach_userstory_statuses(queryset, as_field="userstory_statuses_attr"):
           """
 
     sql = sql.format(tbl=model._meta.db_table)
+
+    # pass user as parameter and check users full name in list and depending on that show user-stories statuses
+
+    if project_id == ADKRITY_PROJECT_ID:
+        user_role = get_user_role_for_project(queryset, user, project_id)
+        print(f"user role for {user} is  {user_role}")
+
+        user_story_status_list = list(ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).values_list('allowed_statuses__name', flat=True))
+        status_list = ", ".join("'{}'".format(status) for status in user_story_status_list)
+        if status_list:
+            sql = """
+                   SELECT json_agg(
+                              row_to_json(projects_userstorystatus)
+                              ORDER BY projects_userstorystatus.order
+                          )
+                     FROM projects_userstorystatus
+                    WHERE projects_userstorystatus.project_id = {tbl}.id
+                    and projects_userstorystatus.name in ({status_list})     
+              """
+            sql = sql.format(tbl=model._meta.db_table, status_list=status_list)
+
+        # if user_role in DESIGNER_ROLE_LIST:
+        #     status_list_str = ", ".join("'{}'".format(status) for status in DESIGNER_STATUS_LIST)
+        #     sql = """
+        #                      SELECT json_agg(
+        #                                 row_to_json(projects_userstorystatus)
+        #                                 ORDER BY projects_userstorystatus.order
+        #                             )
+        #                        FROM projects_userstorystatus
+        #                       WHERE projects_userstorystatus.project_id = {tbl}.id
+        #                       and projects_userstorystatus.name in ({status_list})
+        #                 """
+        #     sql = sql.format(tbl=model._meta.db_table, status_list=status_list_str)
+        # elif user_role in AD_PUBLISH_ROLE_LIST:
+        #     status_list_str = ", ".join("'{}'".format(status) for status in AD_PUBLISH_STATUS_LIST)
+        #     sql = """
+        #                      SELECT json_agg(
+        #                                 row_to_json(projects_userstorystatus)
+        #                                 ORDER BY projects_userstorystatus.order
+        #                             )
+        #                        FROM projects_userstorystatus
+        #                       WHERE projects_userstorystatus.project_id = {tbl}.id
+        #                       and projects_userstorystatus.name in ({status_list})
+        #                 """
+        #     sql = sql.format(tbl=model._meta.db_table, status_list=status_list_str)
+        # else:
+        #     sql = sql.format(tbl=model._meta.db_table)
+
     queryset = queryset.extra(select={as_field: sql})
+
     return queryset
 
 
@@ -407,10 +506,35 @@ def attach_epic_custom_attributes(queryset, as_field="epic_custom_attributes_att
     return queryset
 
 
-def attach_userstory_custom_attributes(queryset, as_field="userstory_custom_attributes_attr"):
+# def attach_userstory_custom_attributes(queryset, as_field="userstory_custom_attributes_attr"):
+#     """Attach a json userstory custom attributes representation to each object of the queryset.
+#
+#     :param queryset: A Django projects queryset object.
+#     :param as_field: Attach the userstory custom attributes as an attribute with this name.
+#
+#     :return: Queryset object with the additional `as_field` field.
+#     """
+#     model = queryset.model
+#     sql = """
+#              SELECT json_agg(
+#                         row_to_json(custom_attributes_userstorycustomattribute)
+#                         ORDER BY custom_attributes_userstorycustomattribute.order
+#                     )
+#                FROM custom_attributes_userstorycustomattribute
+#               WHERE custom_attributes_userstorycustomattribute.project_id = {tbl}.id
+#           """
+#
+#     sql = sql.format(tbl=model._meta.db_table)
+#     queryset = queryset.extra(select={as_field: sql})
+#     return queryset
+
+
+def attach_userstory_custom_attributes(queryset, user, project_id, as_field="userstory_custom_attributes_attr"):
     """Attach a json userstory custom attributes representation to each object of the queryset.
 
     :param queryset: A Django projects queryset object.
+    :param user: A user from whom request is coming
+    :param project_id: A project id
     :param as_field: Attach the userstory custom attributes as an attribute with this name.
 
     :return: Queryset object with the additional `as_field` field.
@@ -426,6 +550,57 @@ def attach_userstory_custom_attributes(queryset, as_field="userstory_custom_attr
           """
 
     sql = sql.format(tbl=model._meta.db_table)
+    if project_id == ADKRITY_PROJECT_ID:
+
+        user_role = get_user_role_for_project(queryset, user, project_id)
+        print(f"user role for {user} is  {user_role}")
+
+        user_story_attr_list = list(
+            ProjectRoleUserStoryCustomAttributeMapping.objects.filter(project_id=project_id, role=user_role).values_list(
+                'allowed_attributes__name', flat=True))
+        attr_list = ", ".join("'{}'".format(status) for status in user_story_attr_list)
+        if attr_list:
+            sql = """
+                     SELECT json_agg(
+                                row_to_json(custom_attributes_userstorycustomattribute)
+                                ORDER BY custom_attributes_userstorycustomattribute.order
+                            )
+                       FROM custom_attributes_userstorycustomattribute
+                      WHERE custom_attributes_userstorycustomattribute.project_id = {tbl}.id
+                      And custom_attributes_userstorycustomattribute.name in ({attr_list})
+                  """
+            sql = sql.format(tbl=model._meta.db_table, attr_list=attr_list)
+
+
+        # if user_role in DESIGNER_ROLE_LIST:
+        #     status_list_str = ", ".join("'{}'".format(field) for field in DESIGNER_FIELD_LIST)
+        #     sql = """
+        #                  SELECT json_agg(
+        #                             row_to_json(custom_attributes_userstorycustomattribute)
+        #                             ORDER BY custom_attributes_userstorycustomattribute.order
+        #                         )
+        #                    FROM custom_attributes_userstorycustomattribute
+        #                   WHERE custom_attributes_userstorycustomattribute.project_id = {tbl}.id
+        #                   And custom_attributes_userstorycustomattribute.name in ({status_list})
+        #               """
+        #     sql = sql.format(tbl=model._meta.db_table, status_list=status_list_str)
+        # elif user_role in AD_PUBLISH_ROLE_LIST:
+        #     status_list_str = ", ".join("'{}'".format(field) for field in AD_PUBLISH_FIELD_LIST)
+        #     print(status_list_str, "custom attributes for social media")
+        #     sql = """
+        #                          SELECT json_agg(
+        #                                     row_to_json(custom_attributes_userstorycustomattribute)
+        #                                     ORDER BY custom_attributes_userstorycustomattribute.order
+        #                                 )
+        #                            FROM custom_attributes_userstorycustomattribute
+        #                           WHERE custom_attributes_userstorycustomattribute.project_id = {tbl}.id
+        #                           And custom_attributes_userstorycustomattribute.name in ({status_list})
+        #                       """
+        #     sql = sql.format(tbl=model._meta.db_table, status_list=status_list_str)
+        # else:
+        #     sql = sql.format(tbl=model._meta.db_table)
+
+
     queryset = queryset.extra(select={as_field: sql})
     return queryset
 
@@ -577,13 +752,23 @@ def attach_my_homepage(queryset, user, as_field="my_homepage_attr"):
     return queryset
 
 
-def attach_extra_info(queryset, user=None):
+def attach_extra_info(queryset, request=None):
+
+    user = request.user if request else None
+    # probable requested urls ["http://localhost:8000/api/v1/projects/by_slug?slug=admin-adkrity", "http://localhost:8000/api/v1/projects/3/tags_colors"]
+    requested_url_sub_path = request.build_absolute_uri().split("projects")[-1] if request else None
+
+    project_id = None
+    if requested_url_sub_path:
+        project_id = get_project_id_by_url_sub_path(queryset, requested_url_sub_path)
+
     queryset = attach_members(queryset)
     queryset = attach_closed_milestones(queryset)
     queryset = attach_notify_policies(queryset)
     queryset = attach_epic_statuses(queryset)
     queryset = attach_swimlanes(queryset)
-    queryset = attach_userstory_statuses(queryset)
+    # queryset = attach_userstory_statuses(queryset)
+    queryset = attach_userstory_statuses(queryset, user, project_id)
     queryset = attach_userstory_duedates(queryset)
     queryset = attach_points(queryset)
     queryset = attach_task_statuses(queryset)
@@ -594,7 +779,8 @@ def attach_extra_info(queryset, user=None):
     queryset = attach_priorities(queryset)
     queryset = attach_severities(queryset)
     queryset = attach_epic_custom_attributes(queryset)
-    queryset = attach_userstory_custom_attributes(queryset)
+    # queryset = attach_userstory_custom_attributes(queryset)
+    queryset = attach_userstory_custom_attributes(queryset, user, project_id)
     queryset = attach_task_custom_attributes(queryset)
     queryset = attach_issue_custom_attributes(queryset)
     queryset = attach_roles(queryset)
