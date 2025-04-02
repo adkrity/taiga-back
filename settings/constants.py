@@ -1,5 +1,6 @@
 ADKRITY_PROJECT_ID = 1
-
+SERVER_APP_BASE_URL= "https://adm.adkrity.com/api/v1/"
+# SERVER_APP_BASE_URL= "http://127.0.0.1:9999/api/v1/"
 
 # User's List of different teams
 DESIGNER_TEAM = ['Ankitmakwana', 'Heta', 'Uttam', '	muktiadkrity', 'JK']
@@ -36,3 +37,9 @@ AD_PUBLISH_FIELD_LIST = ["Contact Number", "Connect To Whatsapp", "Company Name"
                          "Lead Form", "Business Form", "Lead TOS Url", "Ad Interest Targeting", "FB Audience",
                          "Ad Issues"]
 CUSTOMER_SUPPORT_FIELD_LIST = []
+
+GET_MOVED_TICKETS_CONFIG = {"Design": {"to_status": [
+                                                     "Design Done",
+                                                     # "In Designing",
+                                                     ]
+                                       }}

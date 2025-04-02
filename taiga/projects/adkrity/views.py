@@ -1,24 +1,50 @@
-from taiga.projects.history.models import HistoryEntry
-from taiga.base.utils.date import get_future_date
-from taiga.projects.models import Project, Membership
+import requests
+from taiga.projects.models import Project
 from . import models
 from django.http import JsonResponse
 from django.db.models import Q, Count, PositiveIntegerField
 
 from taiga.projects.userstories.models import UserStory
+from settings.constants import SERVER_APP_BASE_URL, ADKRITY_PROJECT_ID
+from .functions import get_moved_tickets_data
 
 
-# added by prince dated 08/02/2024
-def get_moved_tickets_data(project_id, role):
+# api/v1/send-wp-report?role=Design
+def send_report_on_whatsapp(request):
 
-    users = list(Membership.objects.filter(project_id=project_id, role__name__iexact=role).values_list("user_id",flat=True))
-    print(users, "usersssssssss")
+    role = request.GET.get('role', 'Design')
+    final_moved_tickets = get_moved_tickets_data(ADKRITY_PROJECT_ID,role)
 
-    moved_tickets = HistoryEntry.objects.filter(project_id=project_id, user__pk__in=users,
-                                                created_at__gt=get_future_date(-1),
-                                                values_diff_cache__status__isnull=False).values('user__pk').annotate(moved_ticket_count=Count('id'))
-    print(moved_tickets, "??????????????", len(moved_tickets))
-    return users
+    # {'Design Done': [{'user_name': 'Ankit Makwana', 'moved_ticket_count': 2},
+    #                  {'user_name': 'prince', 'moved_ticket_count': 1}],
+    #  'In Designing': [{'user_name': 'Ankit Makwana', 'moved_ticket_count': 3}]} sample final_moved_tickets
+#=======================================================================================================================
+
+    message_lines = ["The below is the list of moved tickets by your team members:"]
+    for status, user_entries in final_moved_tickets.items():
+        message_lines.append(f"{status}:")
+        for entry in user_entries:
+            user_name = entry.get('user_name')
+            count = entry.get('moved_ticket_count', 0)
+            message_lines.append(f"*{user_name}*: {count} ticket{'s' if count != 1 else ''} moved.")
+
+    whatsapp_msg_string = " ".join(message_lines)
+    print(whatsapp_msg_string, "WhatsApp report message string.", sep='\n')
+
+    payload = {
+        "template_name": "taiga_moved_tickets",
+        "message": whatsapp_msg_string,
+        "users": ["919975722243"], # testing user
+    }
+    api_url = f"{SERVER_APP_BASE_URL}internal/send-taiga-wp-report-msg/"
+
+    try:
+        api_response = requests.post(api_url, json=payload)
+        api_response.raise_for_status()  # Raise an error for bad status codes.
+    except requests.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"status": f"{api_response.status_code}", "api_response": api_response.json()})
 
 
 # added by prince
