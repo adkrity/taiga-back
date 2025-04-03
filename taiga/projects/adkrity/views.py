@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Count, PositiveIntegerField
 
 from taiga.projects.userstories.models import UserStory
-from settings.constants import SERVER_APP_BASE_URL, ADKRITY_PROJECT_ID
+from settings.constants import SERVER_APP_BASE_URL, ADKRITY_PROJECT_ID, GET_MOVED_TICKETS_CONFIG
 from .functions import get_moved_tickets_data
 
 
@@ -34,7 +34,7 @@ def send_report_on_whatsapp(request):
     payload = {
         "template_name": "taiga_moved_tickets",
         "message": whatsapp_msg_string,
-        "users": ["919975722243"], # testing user
+        "users": GET_MOVED_TICKETS_CONFIG.get(role).get('team_lead_wp_number'),
     }
     api_url = f"{SERVER_APP_BASE_URL}internal/send-taiga-wp-report-msg/"
 

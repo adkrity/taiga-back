@@ -41,5 +41,7 @@ CUSTOMER_SUPPORT_FIELD_LIST = []
 GET_MOVED_TICKETS_CONFIG = {"Design": {"to_status": [
                                                      "Design Done",
                                                      # "In Designing",
-                                                     ]
-                                       }}
+                                                     ],
+                                        "team_lead_wp_number": ["919925024856",]
+                                       }
+}
