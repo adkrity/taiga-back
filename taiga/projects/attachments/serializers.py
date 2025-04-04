@@ -19,6 +19,7 @@ class AttachmentSerializer(serializers.LightSerializer):
     id = Field()
     project = Field(attr="project_id")
     owner = Field(attr="owner_id")
+    # owner_name = MethodField("get_owner_name")
     name = Field()
     # name = MethodField("get_name_with_created") #added by jay
     attached_file = FileField()
@@ -40,6 +41,11 @@ class AttachmentSerializer(serializers.LightSerializer):
     def get_name_with_created(self, obj):
         return "{}  {}".format(datetime_to_string(convert_to_local_time(obj.created_date)), obj.name)
     #added by jay end
+
+    #added by prince dated 04/04/2025
+    # def get_owner_name(self, obj):
+    #     return f"{obj.owner.username}"
+    # added by prince end
 
     def get_url(self, obj):
         frag = services.generate_refresh_fragment(obj)

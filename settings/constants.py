@@ -43,5 +43,6 @@ GET_MOVED_TICKETS_CONFIG = {"Design": {"to_status": [
                                                      # "In Designing",
                                                      ],
                                         "team_lead_wp_number": ["919909866863",]
+                                        # "team_lead_wp_number": ["919975722243",] # testing
                                        }
 }
