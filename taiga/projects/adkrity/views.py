@@ -68,8 +68,11 @@ def hourly_pending_work(request):
 
         for item in data:
             field = item["status__name"].lower().strip().replace(' ','_')
-            pending_work[field] = item['count']
-
+            if field in pending_work:
+                pending_work[field] = item['count']
+            # else:
+            #     print(f"Warning: Status '{item['status__name']}' doesn't match any field in UserStoryHourlyPendingWork")
+        print(pending_work, "Pending work")
         models.UserStoryHourlyPendingWork.objects.create(**pending_work)
         return JsonResponse({"Success":"Hourly Pending Work Updated Successfully."})
     except Exception as e:
