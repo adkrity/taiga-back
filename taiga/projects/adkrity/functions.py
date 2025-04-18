@@ -4,7 +4,7 @@ from django.db.models.functions import Cast
 from django.db.models.fields import CharField
 from taiga.projects.history.models import HistoryEntry
 from settings.constants import GET_MOVED_TICKETS_CONFIG
-from taiga.base.utils.date import get_future_date
+from taiga.base.utils.date import get_future_date, convert_to_local_time, get_today_date, get_time_range_for_date
 
 # added by prince dated 08/02/2024
 def get_moved_tickets_data(project_id, role):
@@ -14,7 +14,8 @@ def get_moved_tickets_data(project_id, role):
         HistoryEntry.objects.filter(
             project_id=project_id,
             user__pk__in=users,  # Filter using the users list
-            created_at__gt=get_future_date(-1),
+            # created_at__gt=convert_to_local_time(get_future_date(-1)),
+            created_at__gt=get_time_range_for_date(get_today_date())[0],
             values_diff_cache__status__isnull=False
         )
     )
