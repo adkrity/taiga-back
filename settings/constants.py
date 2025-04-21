@@ -42,7 +42,8 @@ GET_MOVED_TICKETS_CONFIG = {"Design": {"to_status": [
                                                      "Design Done",
                                                      # "In Designing",
                                                      ],
-                                        "team_lead_wp_number": ["919909866863",]
-                                        # "team_lead_wp_number": ["919975722243",] # testing
+                                        "team_lead_wp_number": ["919909866863",],
+                                        "pending_work": ["Design Req Done",],
+                                        # "team_lead_wp_number": ["919975722243",], # testing
                                        }
 }
