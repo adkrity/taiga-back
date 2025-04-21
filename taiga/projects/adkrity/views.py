@@ -23,7 +23,7 @@ def send_moved_tickets_report_on_whatsapp(request):
     #  'In Designing': [{'user_name': 'Ankit Makwana', 'moved_ticket_count': 3}]} sample final_moved_tickets
 #================================================ sample final_moved_tickets ===================================================#
 
-    # [{'status__name': 'Design Req Done', 'count': 2}]
+    # {'Design Req Done': 2}
 # ================================================ sample pending_tickets_data ===================================================#
 
     message_lines = []
