@@ -230,9 +230,10 @@ def attach_userstory_statuses(queryset, user, project_id, as_field="userstory_st
         user_role = get_user_role_for_project(queryset, user, project_id)
         print(f"user role for {user} is  {user_role}")
 
-        user_story_status_list = list(ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).values_list('allowed_statuses__name', flat=True))
-        status_list = ", ".join("'{}'".format(status) for status in user_story_status_list)
-        if status_list:
+        user_story_status_list = list(ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).exclude(allowed_statuses__name__isnull=True).values_list('allowed_statuses__name', flat=True))
+        print("user story status list", user_story_status_list)
+        if user_story_status_list:
+            status_list = ", ".join("'{}'".format(status) for status in user_story_status_list)
             sql = """
                    SELECT json_agg(
                               row_to_json(projects_userstorystatus)
@@ -556,10 +557,11 @@ def attach_userstory_custom_attributes(queryset, user, project_id, as_field="use
         print(f"user role for {user} is  {user_role}")
 
         user_story_attr_list = list(
-            ProjectRoleUserStoryCustomAttributeMapping.objects.filter(project_id=project_id, role=user_role).values_list(
+            ProjectRoleUserStoryCustomAttributeMapping.objects.filter(project_id=project_id, role=user_role).exclude(allowed_attributes__name__isnull=True).values_list(
                 'allowed_attributes__name', flat=True))
-        attr_list = ", ".join("'{}'".format(status) for status in user_story_attr_list)
-        if attr_list:
+        print("user story attr list", user_story_attr_list)
+        if user_story_attr_list:
+            attr_list = ", ".join("'{}'".format(status) for status in user_story_attr_list)
             sql = """
                      SELECT json_agg(
                                 row_to_json(custom_attributes_userstorycustomattribute)

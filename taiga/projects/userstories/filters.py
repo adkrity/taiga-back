@@ -59,7 +59,7 @@ class UserStoryStatusesFilter(filters.StatusesFilter):
             user_role = user_membership.role if user_membership else None
 
             status_list = list(
-                ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).values_list(
+                ProjectRoleUserStoryStatusMapping.objects.filter(project_id=project_id, role=user_role).exclude(allowed_statuses__name__isnull=True).values_list(
                     'allowed_statuses', flat=True))
             # if request.user.username in DESIGNER_TEAM:
             #     queryset = queryset.filter(status__name__in=DESIGNER_STATUS_LIST)
