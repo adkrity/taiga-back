@@ -413,6 +413,7 @@ class ProjectDetailSerializer(ProjectSerializer):
     epic_statuses = Field(attr="epic_statuses_attr")
     swimlanes = Field(attr="swimlanes_attr")
     us_statuses = Field(attr="userstory_statuses_attr")
+    us_kanban_statuses = Field(attr="userstory_kanban_statuses_attr")
     us_duedates = Field(attr="userstory_duedates_attr")
     points = Field(attr="points_attr")
     task_statuses = Field(attr="task_statuses_attr")
