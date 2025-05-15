@@ -1,4 +1,8 @@
+from django.conf import settings
+
 ADKRITY_PROJECT_ID = 1
+if settings.DEBUG:
+    ADKRITY_PROJECT_ID = 3
 SERVER_APP_BASE_URL= "https://adm.adkrity.com/api/v1/"
 # SERVER_APP_BASE_URL= "http://127.0.0.1:9999/api/v1/"
 
