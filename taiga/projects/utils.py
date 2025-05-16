@@ -7,6 +7,7 @@
 
 from settings.constants import DESIGNER_ROLE_LIST, AD_PUBLISH_ROLE_LIST, DESIGNER_STATUS_LIST, AD_PUBLISH_STATUS_LIST, AD_PUBLISH_FIELD_LIST, DESIGNER_FIELD_LIST, ADKRITY_PROJECT_ID
 from taiga.projects.adkrity.models import ProjectRoleUserStoryCustomAttributeMapping, ProjectRoleUserStoryStatusMapping
+from django.contrib.auth.models import AnonymousUser
 
 def attach_members(queryset, as_field="members_attr"):
     """Attach a json members representation to each object of the queryset.
@@ -225,8 +226,7 @@ def attach_userstory_kanban_statuses(queryset, user, project_id, as_field="users
     sql = sql.format(tbl=model._meta.db_table)
 
     # pass user as parameter and check users full name in list and depending on that show user-stories statuses
-
-    if project_id == ADKRITY_PROJECT_ID:
+    if project_id and project_id == ADKRITY_PROJECT_ID and user and not isinstance(user, AnonymousUser):
         user_role = get_user_role_for_project(queryset, user, project_id)
         print(f"user role for {user} is  {user_role}")
 
@@ -551,7 +551,7 @@ def attach_userstory_custom_attributes(queryset, user, project_id, as_field="use
           """
 
     sql = sql.format(tbl=model._meta.db_table)
-    if project_id == ADKRITY_PROJECT_ID:
+    if project_id and project_id == ADKRITY_PROJECT_ID and user and not isinstance(user, AnonymousUser):
 
         user_role = get_user_role_for_project(queryset, user, project_id)
         print(f"user role for {user} is  {user_role}")

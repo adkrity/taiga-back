@@ -132,6 +132,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
         return qs
 
     def retrieve(self, request, *args, **kwargs):
+        print(args, kwargs, "3333333333333333")
         qs = self.get_queryset()
         if self.action == "by_slug":
             self.lookup_field = "slug"
@@ -142,7 +143,7 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
             qs = qs.filter(flt)
 
         self.object = get_object_or_error(qs, request.user, **kwargs)
-
+        print(self.object, "444444444444444444")
         self.check_permissions(request, 'retrieve', self.object)
 
         if self.object is None:
@@ -342,8 +343,9 @@ class ProjectViewSet(LikedResourceMixin, HistoryResourceMixin,
 
     @list_route(methods=["GET"])
     def by_slug(self, request, *args, **kwargs):
+        print("1111111")
         slug = request.QUERY_PARAMS.get("slug", None)
-
+        print(slug, "222222222222222222")
         return self.retrieve(request, slug=slug)
 
     @detail_route(methods=["GET", "PATCH"])

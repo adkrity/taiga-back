@@ -53,8 +53,9 @@ class UserStoryStatusesFilter(filters.StatusesFilter):
             queryset = queryset.filter(status__project_id=project_id)
 
         # added condition to filter userstories based on status allowed for different teams
-        if project_id == ADKRITY_PROJECT_ID:
-            user = request.user
+        user = request.user
+        if project_id == ADKRITY_PROJECT_ID and not isinstance(user, AnonymousUser):
+            # user = request.user
             user_membership = Membership.objects.filter(project_id=project_id, user=user).last()
             user_role = user_membership.role if user_membership else None
 
