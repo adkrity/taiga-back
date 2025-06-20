@@ -1,0 +1,29 @@
+{% extends "designer-form.html" %}
+
+{% block content %}
+  {{ block.super }}
+
+  {% if vectors %}
+    <div class="vector-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch;">
+      {% for vector in vectors %}
+        <div class="vector-card" style="display: flex;flex-direction: column;justify-content: space-between;border: 1px solid #ddd; padding: 1rem; width: calc(16.666666667% - 1rem); box-sizing: border-box; text-align: center;">
+          <div class="vector-preview" style="margin-bottom: 0.5rem;">
+            {% if vector.image.url %}
+              <img src="{{ vector.image.url }}" alt="{{ vector.category.name }} preview" style="max-width: 100%; height: auto;">
+            {% endif %}
+          </div>
+          <div class="vector-info" style="margin-top: 0.5rem;">
+            <p class="vector-category" style="font-weight: bold; margin-bottom: 0.5rem;">{{ vector.category.name }}</p>
+            <a href="{{ vector.media.url }}" download class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 0.5rem 1rem; background-color: #007bff; color: #fff; border-radius: 4px;">
+              Download Vector
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="width: 100%; text-align: center; padding: 2rem; color: #666;">
+      No vectors found. Try adjusting your search criteria.
+    </div>
+  {% endif %}
+{% endblock %}

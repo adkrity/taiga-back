@@ -20,6 +20,7 @@ from .routers import router
 urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/', include('taiga.custom_urls')),
+    path('api/v1/', include('taiga.projects.designers.urls')),
     path('admin/', admin.site.urls),
 ]
 

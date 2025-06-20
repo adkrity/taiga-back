@@ -1,0 +1,29 @@
+{% extends "designer-form.html" %}
+{% load static %}
+
+{% block content %}
+  {{ block.super }}
+
+  <div class="card mt-4 shadow-sm">
+    <div class="card-header bg-light">
+      <h3 class="mb-0">Existing Vector Categories</h3>
+    </div>
+    <br>
+    <div class="card-body">
+      {% if existing_categories %}
+        <ul class="list-group">
+          {% for category in existing_categories %}
+            <li class="list-group-item d-flex align-items-center">
+              <span class="me-2 text-secondary">{{ forloop.counter }}.</span>
+              <span>{{ category.name }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="alert alert-info" role="alert">
+          No categories have been created yet. Use the form above to add your first category.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,7 +1,41 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from taiga.projects.models import Project, UserStoryStatus
+from taiga.users.models import User
 
-# Create your models here.
+
+class BaseModel(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name=_("created date"))
+    modified_date = models.DateTimeField(auto_now=True, verbose_name=_("modified date"))
+
+    class Meta:
+        abstract = True
+
+
+class TagMaster(BaseModel):
+
+    name = models.CharField(max_length = 100, db_index=True)
+    is_approved = models.BooleanField(default=False, db_index=True)
+    is_processed = models.BooleanField(default=False, db_index=True)
+
+    synonyms = models.ManyToManyField('self', blank=True)
+    related_tags = models.ManyToManyField('self', blank=True)
+    meta_data = models.JSONField(default=None, blank = True, null = True)
+
+    approved_by = models.ForeignKey(User, on_delete=models.PROTECT, default=None, blank = True, null = True, db_index=True)
+    approved_on = models.DateTimeField(default=None, blank = True, null = True)
+
+    def __str__(self):
+        return '%s' % (self.name)
+
+
+class MediaTypeMaster(BaseModel):
+    type = models.CharField(max_length = 20, db_index=True)
+    weight = models.FloatField(default=0)
+
+    def __str__(self):
+        return '%s' % (self.type)
+
 
 # Mapping for allowed statuses per role in a project
 class ProjectRoleUserStoryStatusMapping(models.Model):

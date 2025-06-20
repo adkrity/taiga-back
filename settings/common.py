@@ -33,16 +33,17 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'taiga_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'taiga_db',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
 
 #DATABASES = {
 #    "default": {
@@ -70,7 +71,7 @@ INSTANCE_TYPE = "SRC"
 CELERY_ENABLED = True
 from kombu import Queue  # noqa
 
-#CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_RESULT_BACKEND = None # for a general installation, we don't need to store the results
 CELERY_ACCEPT_CONTENT = ['pickle', ]  # Values are 'pickle', 'json', 'msgpack' and 'yaml'
 CELERY_TASK_SERIALIZER = "pickle"
@@ -84,6 +85,8 @@ CELERY_QUEUES = (
 CELERY_TASK_DEFAULT_EXCHANGE = 'tasks'
 CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'topic'
 CELERY_TASK_DEFAULT_ROUTING_KEY = 'task.default'
+# CELERY_TASK_ALWAYS_EAGER = True
+# CELERY_TASK_EAGER_PROPAGATES = True
 
 
 PASSWORD_HASHERS = [
@@ -362,6 +365,7 @@ INSTALLED_APPS = [
     "taiga.projects.epics",
     "taiga.projects.userstories",
     "taiga.projects.adkrity",
+    "taiga.projects.designers",
     "taiga.projects.tasks",
     "taiga.projects.issues",
     "taiga.projects.wiki",

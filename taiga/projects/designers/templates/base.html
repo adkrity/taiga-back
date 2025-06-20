@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>{% block title %}Creonest by Adkrity{% endblock %}</title>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="HandheldFriendly" content="True" />
+
+    <!-- Google Font for stylish brand name -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"/>
+    <link rel="shortcut icon" href="/static/favicon.png" />
+    <link href="https://fonts.cdnfonts.com/css/britania-ligatura" rel="stylesheet">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+      /* Reset and Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Header */
+      .top-bar {
+        background: linear-gradient(120deg, #314755, #26a0da);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        z-index: 100;
+        height: 80px;
+      }
+
+      .top-bar .brand {
+        font-size: 2rem;
+        font-family: 'Britania Ligatura', cursive;
+<!--        font-family: 'Pacifico', cursive;-->
+<!--        font-family: 'Britania Ligatura', serif;-->
+      }
+
+      .top-bar .header-links {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .top-bar .header-links a {
+        font-size: 1.1rem;
+        transition: opacity 0.3s;
+      }
+
+      .top-bar .header-links a:hover {
+        opacity: 0.8;
+      }
+
+      /* Mobile menu toggle button */
+      .mobile-menu-toggle {
+        display: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Container for sidebar and content */
+      .page-container {
+        display: flex;
+        height: calc(100vh - 80px - 50px); /* Subtract header and footer heights */
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 240px;
+        background-color: #fff;
+        height: 100%;
+        box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+        overflow-y: auto;
+        flex-shrink: 0;
+        position: relative;
+        transition: width 0.3s ease;
+      }
+
+      .sidebar.collapsed {
+        width: 60px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .sidebar li {
+        margin: 1rem 0;
+      }
+
+      .sidebar li a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: #333;
+        font-weight: 500;
+        transition: background 0.3s, color 0.3s;
+        white-space: nowrap;
+      }
+
+      .sidebar li a:hover {
+        background-color: #f0f0f0;
+        color: #26a0da;
+      }
+
+      .sidebar li a i {
+        font-size: 1.2rem;
+        width: 1.5rem;
+        text-align: center;
+      }
+
+      .sidebar.collapsed li a span {
+        display: none;
+      }
+
+      .sidebar.collapsed li a {
+        padding: 0.75rem;
+        justify-content: center;
+      }
+
+      /* Toggle button at bottom of sidebar */
+      .sidebar-toggle {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 0.75rem 0;
+        text-align: center;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        border-top: 1px solid #ddd;
+        transition: background 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .sidebar-toggle:hover {
+        background-color: #e0e0e0;
+      }
+
+      .sidebar-toggle i {
+        transition: transform 0.3s;
+      }
+
+      .sidebar.collapsed .sidebar-toggle i {
+        transform: rotate(180deg);
+      }
+
+       /* Dropdown styles */
+      .sidebar .dropdown .dropdown-menu {
+        display: none;
+        padding-left: 20px;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease;
+      }
+
+    .sidebar .dropdown.active .dropdown-menu {
+        display: block;
+        max-height: 500px; /* Adjust as needed based on number of items */
+    }
+
+    .sidebar .dropdown-toggle {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .sidebar .dropdown-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.8em;
+        margin-left: auto;
+    }
+
+    .sidebar .dropdown.active .dropdown-icon {
+        transform: rotate(180deg);
+    }
+
+    /* If your sidebar has collapsed state, add these styles */
+    .sidebar.collapsed .dropdown-menu {
+        display: none !important;
+    }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+      }
+
+      /* Footer */
+      .footer {
+        background: linear-gradient(120deg, #26a0da, #314755);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        height: 50px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 992px) {
+        .sidebar:not(.collapsed) {
+          width: 200px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        html, body {
+          overflow: auto;
+        }
+
+        body {
+          height: auto;
+        }
+
+        .page-container {
+          flex-direction: column;
+          height: auto;
+        }
+
+        .mobile-menu-toggle {
+          display: block;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease;
+          padding: 0;
+        }
+
+        .sidebar.active {
+          max-height: 500px;
+          padding: 1rem 0;
+        }
+
+        .sidebar-toggle {
+          display: none;
+        }
+
+        .main-content {
+          height: auto;
+          overflow: visible;
+        }
+      }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="top-bar">
+<!--        <div class="brand">Creonest by Adkrity</div>-->
+        <a href="{% url 'design_home' %}" class="brand">Creonest by Adkrity</a>
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="header-links">
+            {% block header_links %}
+            <a href="#"><i class="fa-solid fa-user"></i></a>
+            <a href="#"><i class="fa-solid fa-bell"></i></a>
+            <a href="#"><i class="fa-solid fa-gear"></i></a>
+            {% endblock %}
+        </div>
+        {% block header_extra %}{% endblock %}
+    </header>
+
+    <div class="page-container">
+        <!-- Sidebar -->
+
+<!--        <nav class="sidebar" id="sidebar">-->
+<!--            <ul>-->
+<!--                <li><a href="{% url 'design_home' %}"><i class="fa-solid fa-house"></i> <span>Home</span></a></li>-->
+<!--                <li><a href="{% url 'ps_fonts' %}"><i class="fa-solid fa-font"></i> <span>Fonts</span></a></li>-->
+<!--                <li><a href="#"><i class="fa-solid fa-vector-square"></i> <span>Vectors</span></a></li>-->
+<!--                <li><a href="#"><i class="fa-solid fa-layer-group"></i> <span>Templates</span></a></li>-->
+<!--                <li><a href="#"><i class="fa-solid fa-cog"></i> <span>Settings</span></a></li>-->
+<!--            </ul>-->
+<!--            <div class="sidebar-toggle" id="sidebar-toggle">-->
+<!--                <i class="fa-solid fa-chevron-left"></i>-->
+<!--            </div>-->
+<!--        </nav>-->
+
+        <nav class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="{% url 'design_home' %}"><i class="fa-solid fa-house"></i> <span>Home</span></a></li>
+                <li><a href="{% url 'ps_fonts' %}"><i class="fa-solid fa-font"></i> <span>Fonts</span></a></li>
+                <li><a href="{% url 'ps_vector' %}"><i class="fa-solid fa-vector-square"></i> <span>Vectors</span></a></li>
+<!--            <li><a href="#"><i class="fa-solid fa-layer-group"></i> <span>Templates</span></a></li>   -->
+
+                <!-- New Upload dropdown menu -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle"><i class="fa-solid fa-upload"></i> <span>Upload</span> <i class="fa-solid fa-chevron-down dropdown-icon"></i></a>
+                    <ul class="dropdown-menu">
+<!--                        <li><a href="#"><i class="fa-solid fa-image"></i> <span>Images</span></a></li>-->
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                            <li><a href="{% url 'upload_ps_fonts' %}"><i class="fa-solid fa-font"></i> <span>Fonts</span></a></li>
+                        {% endif %}
+                        <li><a href="{% url 'upload_ps_vec' %}"><i class="fa-solid fa-vector-square"></i> <span>Vectors</span></a></li>
+<!--                        <li><a href="#"><i class="fa-solid fa-layer-group"></i> <span>Vector Category</span></a></li>-->
+                        <li><a href="{% url 'create_ps_vec_cat' %}"><i class="fa-solid fa-folder-tree"></i> <span>Vector Category</span></a></li>
+                    </ul>
+                </li>
+
+<!--                <li><a href="#"><i class="fa-solid fa-cog"></i> <span>Settings</span></a></li>-->
+            </ul>
+            <div class="sidebar-toggle" id="sidebar-toggle">
+                <i class="fa-solid fa-chevron-left"></i>
+            </div>
+        </nav>
+
+        <!-- Main Content Section -->
+        <main class="main-content" id="main-content">
+            {% block content %}
+            <!-- Default content can go here -->
+            <h1>Welcome to Creonest</h1>
+            <p>This is the default content. Override this block in your child templates.</p>
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        {% block footer %}
+        <p>&copy; 2025 Adkrity. All rights reserved.</p>
+        {% endblock %}
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+
+            // Sidebar collapse toggle functionality
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    // If you want to remember collapse state across page loads, uncomment the next lines
+                    // const isCollapsed = sidebar.classList.contains('collapsed');
+                    // localStorage.setItem('sidebarCollapsed', isCollapsed);
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event to dropdown toggles
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Toggle the active class on parent li
+                    const parentLi = this.parentElement;
+                    parentLi.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

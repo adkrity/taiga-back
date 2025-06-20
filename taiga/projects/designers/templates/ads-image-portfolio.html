@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block title %}Creonest - Image Search{% endblock %}
+
+{% block extra_head %}
+  <style>
+    /* Search and Ads Page Specific Styles */
+
+    /* Search Container */
+    .search-container {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .search-input-group {
+      display: flex;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input-group input[type="text"] {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      min-width: 150px;
+    }
+
+    .search-input-group input[type="submit"] {
+      background-color: #26a0da;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+    }
+
+    .search-input-group input[type="submit"]:hover {
+      background-color: #1f7cb5;
+    }
+
+    .filter-section {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 1rem;           /* space between groups */
+      align-items: flex-start;
+    }
+
+    .filter-group {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .filter-title {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .filter-option input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .filter-option label {
+      cursor: pointer;
+    }
+
+    /* Image Grid Section */
+    .image-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: flex-start;
+    }
+
+    .image-card {
+      background-color: #fff;
+      padding: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      flex-basis: calc(50% - 0.5rem);
+      max-width: calc(50% - 0.5rem);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
+    }
+
+    .image-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .image-card-button {
+      background-color: #26a0da;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+      flex-grow: 1;
+    }
+
+    .image-card-button:hover {
+      background-color: #1f7cb5;
+    }
+
+    .download-button {
+      background-color: #314755;
+    }
+
+    /* Loader */
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #26a0da;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1.5s linear infinite;
+      margin: 2rem auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .time-filter-dropdown {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: white;
+      min-width: 50%;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .time-filter-dropdown:focus {
+      outline: none;
+      border-color: #26a0da;
+      box-shadow: 0 0 0 2px rgba(38, 160, 218, 0.2);
+    }
+
+    /* Style for dropdown arrow */
+    .time-filter-dropdown {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      background-size: 1rem;
+      padding-right: 2rem;
+    }
+
+    @media (max-width: 576px) {
+      .time-filter-dropdown {
+        width: 100%;
+      }
+    }
+
+    /* Responsive Grid */
+    @media (min-width: 768px) {
+      .image-card {
+        flex-basis: calc(33.333% - 0.667rem);
+        max-width: calc(33.333% - 0.667rem);
+      }
+    }
+
+    @media (min-width: 992px) {
+      .image-card {
+        flex-basis: calc(25% - 0.75rem);
+        max-width: calc(25% - 0.75rem);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .search-input-group {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .search-input-group input[type="submit"] {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+
+      .image-card {
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- LOADER -->
+  <div class="loader" id="loader"></div>
+
+  <!-- SEARCH & FILTER CONTAINER -->
+  <div class="search-container">
+    <form class="search-form" action="" method="get" onsubmit="OnSubmit()">
+      {% csrf_token %}
+
+      <div class="search-input-group">
+        <input type="text" name="q" value="{{q}}" placeholder="Search..." />
+        <input type="submit" value="Search" />
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Search In</div>
+        <div class="filter-options">
+          <div class="filter-option">
+            <input type="checkbox" name="in[]" value="category" id="category" checked />
+            <label for="category">Category</label>
+          </div>
+          <div class="filter-option">
+            <input type="checkbox" name="in[]" value="caption" id="caption" checked />
+            <label for="caption">Caption</label>
+          </div>
+          <div class="filter-option">
+            <input type="checkbox" name="in[]" value="company_name" id="company_name" checked />
+            <label for="company_name">Business Name</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-row">
+        <div class="filter-group">
+        <div class="filter-title">Time Period</div>
+          <div class="filter-options">
+            <select name="time_period" class="time-filter-dropdown">
+              <option value="latest" {% if time_period == 'latest' or not time_period %}selected{% endif %}>Latest</option>
+              <option value="today" {% if time_period == 'today' %}selected{% endif %}>Today</option>
+              <option value="week" {% if time_period == 'week' %}selected{% endif %}>Last Week</option>
+              <option value="month" {% if time_period == 'month' %}selected{% endif %}>Last Month</option>
+              <option value="quarter" {% if time_period == 'quarter' %}selected{% endif %}>Last 3 Months</option>
+              <option value="all" {% if time_period == 'all' %}selected{% endif %}>All Time</option>
+            </select>
+          </div>
+        </div>
+          <div class="filter-group">
+          <div class="filter-title">Designers</div>
+          <div class="filter-options">
+            <select name="designer[]" class="time-filter-dropdown" multiple>
+              <option value="">— select designer —</option>
+              {% for designer in designers_list %}
+                <option value="{{ designer.id }}" {% if designer.id|stringformat:"s" in selected_designer %}selected{% endif %} >{{ designer.get_full_name|default:designer.username }}</option>
+              {% empty %}
+                <option disabled>No designers found</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        </div>
+      </div>
+
+
+      {% if category_list %}
+        <div class="filter-section">
+          <div class="filter-title">Categories</div>
+          <div class="filter-options">
+<!--            {% for data in category_list %}-->
+<!--            <div class="filter-option">-->
+<!--              <input type="checkbox" name="category[]" value="{{data.id}}" id="cat-{{data.id}}" checked />-->
+<!--              <label for="cat-{{data.id}}">{{data.name}}</label>-->
+<!--            </div>-->
+<!--            {% endfor %}-->
+
+            {% for data in category_list %}
+            <div class="filter-option">
+              <input type="checkbox" name="category[]" value="{{data}}" id="cat-{{data}}" checked />
+              <label for="cat-{{data}}">{{data}}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if b_id %}
+        <input type="hidden" name="b_id" value="{{b_id}}" />
+      {% endif %}
+
+      {% if ad_id %}
+        <input type="hidden" name="ad_id" value="{{ad_id}}" />
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- ADS / IMAGES SECTION -->
+  <div class="image-grid" style="display: flex;flex-wrap: wrap;gap: 1rem;align-items: stretch;">
+    {% for data in ads %}
+      <div class="image-card" style=" display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #ddd; padding: 0.5rem; width: calc(25% - 1rem); box-sizing: border-box;">
+        <a href="{{ data.full_image }}" class="image-popup" download style="display: block; margin-bottom: 0.5rem;">
+          <img src="{{ data.image }}" alt="Ad image" style="width: 100%; height: auto; display: block;"/>
+        </a>
+
+        <div class="image-card-actions" style="margin-top: 0.5rem;">
+          {% if list_for_ads %}
+            <button class="image-card-button" onclick="onShare('{{ data.full_image }}', '')" style="display: block; width: 100%; margin-bottom: 0.25rem;">Send WhatsApp</button>
+            <form method="get" action="{{data.full_image}}">
+              <button type="submit" class="image-card-button download-button" style="display: block; width: 100%;">Download</button>
+            </form>
+          {% endif %}
+
+          {% if not list_for_ads and data.ticket_url %}
+            <button class="image-card-button" onclick="window.open('{{ data.ticket_url }}', '_blank')" style="display: block; width: 100%;">Open Ticket in Taiga</button>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div style="width: 100%; text-align: center; padding: 2rem; color: #666;">
+        No images found. Try adjusting your search criteria.
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="text/javascript">
+  function OnSubmit() {
+      console.log('on submit');
+      var element = document.getElementById("loader");
+      element.style.display = "block";
+    }
+
+  async function onShare(fileURL, caption) {
+    // const imageResponse = await window.fetch(files[i])
+    // const imageBuffer = await imageResponse.arrayBuffer()
+    // const temp = new File([imageBuffer], 'prod.webp', {
+    //   type: 'image/webp',
+    //   lastModified: Date.now()
+    // })
+    const filesArray = [];
+    const response = await fetch(fileURL);
+    const blob = await response.blob();
+    const temp = new File([blob], 'adkrity.jpg', {
+      type: 'image/jpeg',
+      lastModified: Date.now()
+    });
+
+    filesArray.push(temp);
+
+    const shareData = {
+      // text: caption,
+      // title: caption,
+      files: filesArray,
+      // url: fileURL
+    };
+    navigator.share(shareData).then(() => {
+      console.log('Shared successfully');
+    });
+  }
+</script>
+{% endblock %}
