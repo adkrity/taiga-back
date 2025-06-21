@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.templatetags.static import static
 
 ADKRITY_PROJECT_ID = 1
 if settings.DEBUG:
@@ -10,7 +11,8 @@ TAIGA_TICKET_URL = "https://task.adkrity.com/"
 if settings.DEBUG:
     TAIGA_TICKET_URL = "http://127.0.0.1:8000/"
 
-PLACEHOLDER_IMAGE_LINK = TAIGA_TICKET_URL+"media/placeholder/ad-placeholder-generic.jpg"
+# PLACEHOLDER_IMAGE_LINK = TAIGA_TICKET_URL+"taiga/projects/designers/templates/assets/ad-placeholder-generic.jpg"
+PLACEHOLDER_IMAGE_LINK = static("ad-placeholder-generic.jpg")
 # User's List of different teams
 DESIGNER_TEAM = ['Ankitmakwana', 'Heta', 'Uttam', '	muktiadkrity', 'JK']
 AD_PUBLISH_TEAM = ['Khushbu', '	Jenish2001', 'janviadkrity', 'prince']

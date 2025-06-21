@@ -15,13 +15,15 @@ class GetAdImageSerializer(ModelSerializer):
         fields = ['id', 'image', 'full_image', 'ticket_url']
 
     def get_image(self, obj):
-        last_image = qs = FinalAttachment.objects.filter(
+        last_image = FinalAttachment.objects.filter(
             object_id=obj.id
         ).filter(
             Q(attached_file__iendswith=".jpg") |
             Q(attached_file__iendswith=".jpeg") |
             Q(attached_file__iendswith=".png")
         ).order_by('-created_date').first()
+        # last_image = FinalAttachment.objects.filter(object_id=obj.id, attached_file__iendswith=".jpg").order_by(
+        #     '-created_date').first()
         return last_image.attached_file.url if last_image else PLACEHOLDER_IMAGE_LINK
 
     def get_full_image(self, obj):

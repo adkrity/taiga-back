@@ -264,6 +264,7 @@ STATICFILES_FINDERS = [
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, "taiga/projects/designers/templates/assets"),
 )
 
 # Default storage

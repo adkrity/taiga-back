@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Creonest - Image Search{% endblock %}
 
 {% block extra_head %}
@@ -345,7 +345,7 @@
     {% for data in ads %}
       <div class="image-card" style=" display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #ddd; padding: 0.5rem; width: calc(25% - 1rem); box-sizing: border-box;">
         <a href="{{ data.full_image }}" class="image-popup" download style="display: block; margin-bottom: 0.5rem;">
-          <img src="{{ data.image }}" alt="Ad image" style="width: 100%; height: auto; display: block;"/>
+          <img src="{% if data.image %}{{ data.image }}{% else %}{% static 'ad-placeholder-generic.jpg' %}{% endif %}" alt="Ad image" style="width: 100%; height: auto; display: block;"/>
         </a>
 
         <div class="image-card-actions" style="margin-top: 0.5rem;">
