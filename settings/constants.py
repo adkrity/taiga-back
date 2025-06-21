@@ -6,8 +6,11 @@ if settings.DEBUG:
 SERVER_APP_BASE_URL= "https://adm.adkrity.com/api/v1/"
 # SERVER_APP_BASE_URL= "http://127.0.0.1:9999/api/v1/"
 
-SUPPORT_TICKET_URL = "https://task.adkrity.com/project/adkrity/"
+TAIGA_TICKET_URL = "https://task.adkrity.com/"
+if settings.DEBUG:
+    TAIGA_TICKET_URL = "http://127.0.0.1:8000/"
 
+PLACEHOLDER_IMAGE_LINK = TAIGA_TICKET_URL+"media/placeholder/ad-placeholder-generic.jpg"
 # User's List of different teams
 DESIGNER_TEAM = ['Ankitmakwana', 'Heta', 'Uttam', '	muktiadkrity', 'JK']
 AD_PUBLISH_TEAM = ['Khushbu', '	Jenish2001', 'janviadkrity', 'prince']
