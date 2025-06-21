@@ -101,7 +101,9 @@ CUSTOM_ATTRIBUTE_IDS = {
     "lead_tos_url": 51,
     "ad_interest_targeting": 54,
     "fb_audience": 52,
-    "ad_issues": 55
+    "ad_issues": 55,
+    "ad_id": 60,
+    "business_id": 61
 }
 if settings.DEBUG:
     CUSTOM_ATTRIBUTE_IDS = {

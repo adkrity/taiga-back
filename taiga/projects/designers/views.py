@@ -342,8 +342,8 @@ def ads_images_search_view(request, business_wise=False):
         ad_attribute_values = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["ad_id"]): ad_id}).last()
 
         # us_category = ad_attribute_values["attribute_values"][f"{business_cat_custom_attribute.id}"]
-        us_category = ad_attribute_values.attributes_values.get(str(CUSTOM_ATTRIBUTE_IDS["business_id"])) if ad_attribute_values else None
-        us_with_same_cat = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["business_id"]): us_category}).values_list("user_story", flat=True)
+        us_category = ad_attribute_values.attributes_values.get(str(CUSTOM_ATTRIBUTE_IDS["category"])) if ad_attribute_values else None
+        us_with_same_cat = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["category"]): us_category}).values_list("user_story_id", flat=True)
 
         final_queryset = initial_queryset.filter(id__in=us_with_same_cat)
 
@@ -394,7 +394,7 @@ def ads_images_search_view(request, business_wise=False):
             final_queryset = initial_queryset
 
         category_us = UserStoryCustomAttributesValues.objects.annotate(
-            category_name=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['business_id'])}"),
+            category_name=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['category'])}"),
                                function="jsonb_extract_path_text",
                                output_field=TextField())).filter(category_name__in=category_filter).values_list(
             "user_story_id", flat=True)
@@ -460,7 +460,7 @@ def ads_images_search_view(request, business_wise=False):
     if final_queryset.count() > 0:
         available_categories = UserStoryCustomAttributesValues.objects.filter(
             user_story_id__in=final_queryset.values_list('id', flat=True)).annotate(
-                    category_val=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['business_id'])}"), function="jsonb_extract_path_text",
+                    category_val=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['category'])}"), function="jsonb_extract_path_text",
                                   output_field=TextField())).values_list(
             "category_val", flat=True).distinct()
         context["category_list"] = list(available_categories) if available_categories else []
