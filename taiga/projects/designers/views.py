@@ -339,8 +339,7 @@ def ads_images_search_view(request, business_wise=False):
     if ad_id and not search_query:
         print('ad_id', ad_id, category_filter)
         # ad_id_custom_attribute = UserStoryCustomAttribute.objects.filter(project_id=ADKRITY_PROJECT_ID,name__iexact="Ad Id").last()
-        ad_attribute_values = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["ad_id"]): ad_id}).last()
-
+        ad_attribute_values = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["ad_id"]): int(ad_id)}).last()
         # us_category = ad_attribute_values["attribute_values"][f"{business_cat_custom_attribute.id}"]
         us_category = ad_attribute_values.attributes_values.get(str(CUSTOM_ATTRIBUTE_IDS["category"])) if ad_attribute_values else None
         us_with_same_cat = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["category"]): us_category}).values_list("user_story_id", flat=True)
@@ -416,7 +415,7 @@ def ads_images_search_view(request, business_wise=False):
 
     if business_id:
         # business_id_custom_attribute = UserStoryCustomAttribute.objects.filter(name__iexact="Business Id").last()
-        business_wise_us = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains={str(CUSTOM_ATTRIBUTE_IDS['business_id']):business_id}).values_list("user_story_id",flat=True)
+        business_wise_us = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains={str(CUSTOM_ATTRIBUTE_IDS['business_id']):int(business_id)}).values_list("user_story_id",flat=True)
         final_queryset = UserStory.objects.filter(id__in=business_wise_us)
 
     if ad_id:
