@@ -462,7 +462,7 @@ def ads_images_search_view(request, business_wise=False):
                     category_val=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['category'])}"), function="jsonb_extract_path_text",
                                   output_field=TextField())).values_list(
             "category_val", flat=True).distinct()
-        context["category_list"] = list(available_categories) if available_categories else []
+        context["category_list"] = list(set(available_categories)) if available_categories else []
 
     return HttpResponse(template.render(context, request))
 
