@@ -386,7 +386,8 @@ def ads_images_search_view(request, business_wise=False):
             final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-90))[0])
         elif time_period == "latest":
             final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-6))[0])
-
+        elif time_period == "oldest":
+            final_queryset = final_queryset.filter(created_date__lt=get_time_range_for_date(get_future_date(-300))[0])
 
     if category_filter:
         if not search_query:
