@@ -1,4 +1,4 @@
-from django.db.models import Max
+from django.db.models import Max, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template import loader
@@ -430,6 +430,8 @@ def ads_images_search_view(request, business_wise=False):
         if not search_query:
             final_queryset = initial_queryset
         final_queryset = final_queryset.filter(assigned_users__id__in=selected_designer)
+
+    final_queryset = final_queryset.annotate(attachments_count=Count('final_attachments')).filter(attachments_count__gt=0)
 
     if business_id:
         random_list = final_queryset.all()

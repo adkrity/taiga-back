@@ -1,4 +1,6 @@
 # from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+
 from settings.constants import TAIGA_TICKET_URL, PLACEHOLDER_IMAGE_LINK
 from taiga.base.api.serializers import ModelSerializer,SerializerMethodField
 from taiga.projects.attachments.models import FinalAttachment
@@ -16,7 +18,8 @@ class GetAdImageSerializer(ModelSerializer):
 
     def get_image(self, obj):
         last_image = FinalAttachment.objects.filter(
-            object_id=obj.id
+            content_type=ContentType.objects.get_for_model(obj),
+            object_id=obj.id, attached_file__isnull=False
         ).filter(
             Q(attached_file__iendswith=".jpg") |
             Q(attached_file__iendswith=".jpeg") |
