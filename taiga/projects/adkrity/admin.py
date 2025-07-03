@@ -24,7 +24,7 @@ class ProjectRoleUserStoryStatusMappingAdmin(admin.ModelAdmin):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
-class ProjectRoleUserStoryCustomAttributeMapping(admin.ModelAdmin):
+class ProjectRoleUserStoryCustomAttributeMappingAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "project":
@@ -45,6 +45,10 @@ class UserStoryHourlyPendingWorkAdmin(admin.ModelAdmin):
     'id', 'onboarding_call', 'sent_for_approval', 'client_confirmation_pending', 'client_req_pending', 'missing_req')]
 
 
+class AdKrityTagMasterAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(models.UserStoryHourlyPendingWork, UserStoryHourlyPendingWorkAdmin)
 admin.site.register(models.ProjectRoleUserStoryStatusMapping, ProjectRoleUserStoryStatusMappingAdmin)
-admin.site.register(models.ProjectRoleUserStoryCustomAttributeMapping, ProjectRoleUserStoryCustomAttributeMapping)
+admin.site.register(models.ProjectRoleUserStoryCustomAttributeMapping, ProjectRoleUserStoryCustomAttributeMappingAdmin)
+admin.site.register(models.AdKrityTagMaster, AdKrityTagMasterAdmin)

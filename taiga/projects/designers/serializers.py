@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from settings.constants import TAIGA_TICKET_URL, PLACEHOLDER_IMAGE_LINK
 from taiga.base.api.serializers import ModelSerializer,SerializerMethodField
-from taiga.projects.attachments.models import FinalAttachment
+from taiga.projects.attachments.models import FinalAttachment, Attachment
 from taiga.projects.userstories.models import UserStory
 from django.db.models import Q
 
@@ -25,6 +25,16 @@ class GetAdImageSerializer(ModelSerializer):
             Q(attached_file__iendswith=".jpeg") |
             Q(attached_file__iendswith=".png")
         ).order_by('-created_date').first()
+
+        if not last_image:
+            last_image = Attachment.objects.filter(
+                content_type=ContentType.objects.get_for_model(obj),
+                object_id=obj.id, attached_file__isnull=False
+            ).filter(
+                Q(attached_file__iendswith=".jpg") |
+                Q(attached_file__iendswith=".jpeg") |
+                Q(attached_file__iendswith=".png")
+            ).order_by('-created_date').first()
         # last_image = FinalAttachment.objects.filter(object_id=obj.id, attached_file__iendswith=".jpg").order_by(
         #     '-created_date').first()
         # return last_image.attached_file.url if last_image else PLACEHOLDER_IMAGE_LINK

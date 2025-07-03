@@ -12,4 +12,5 @@ path('design/upload/ps-fonts/', views.UploadDesignerFontsView.as_view(), name="u
 # path('design/ps-fonts/', views.get_ps_fonts, name="ps_fonts"),
 
 path('design/create/vec-category/', views.CreateDesignerMediaCategoryView.as_view(), name="create_ps_vec_cat"),
+path('design/create/tags/', views.CreateAdKrityTagMasterView.as_view(), name="create_tags"),
 ]

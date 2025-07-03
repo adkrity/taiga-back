@@ -108,7 +108,8 @@ CUSTOM_ATTRIBUTE_IDS = {
     "fb_audience": 52,
     "ad_issues": 55,
     "ad_id": 60,
-    "business_id": 61
+    "business_id": 61,
+    "tags":64,
 }
 if settings.DEBUG:
     CUSTOM_ATTRIBUTE_IDS = {
@@ -157,5 +158,6 @@ if settings.DEBUG:
         "fb_audience": 43,
         "ad_issues": 44,
         "ad_id": 50,
-        "business_id": 51
+        "business_id": 51,
+        "tags":59,
     }

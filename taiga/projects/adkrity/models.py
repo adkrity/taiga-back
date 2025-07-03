@@ -12,18 +12,19 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class TagMaster(BaseModel):
+class AdKrityTagMaster(BaseModel):
 
-    name = models.CharField(max_length = 100, db_index=True)
+    name = models.CharField(max_length = 100, db_index=True, unique=True)
+    category = models.CharField(max_length = 255, null=True, blank=True)
     is_approved = models.BooleanField(default=False, db_index=True)
-    is_processed = models.BooleanField(default=False, db_index=True)
-
-    synonyms = models.ManyToManyField('self', blank=True)
-    related_tags = models.ManyToManyField('self', blank=True)
     meta_data = models.JSONField(default=None, blank = True, null = True)
 
-    approved_by = models.ForeignKey(User, on_delete=models.PROTECT, default=None, blank = True, null = True, db_index=True)
-    approved_on = models.DateTimeField(default=None, blank = True, null = True)
+    added_by = models.ForeignKey(User, on_delete=models.PROTECT, default=None, blank = True, null = True, db_index=True)
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.strip().lower()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '%s' % (self.name)

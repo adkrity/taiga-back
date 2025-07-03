@@ -1,5 +1,5 @@
 from django.db import models
-from taiga.projects.adkrity.models import BaseModel, MediaTypeMaster, TagMaster
+from taiga.projects.adkrity.models import BaseModel, MediaTypeMaster, AdKrityTagMaster
 from settings.constants import DESIGNER_FONT_FOLDER, DESIGNER_MEDIA_FOLDER
 
 
@@ -43,7 +43,7 @@ class DesignerMedia(BaseModel):
         verbose_name="Vector (Psd)"
     )
 
-    tags = models.ForeignKey(TagMaster, on_delete=models.PROTECT, null=True, blank=True)
+    tags = models.ForeignKey(AdKrityTagMaster, on_delete=models.PROTECT, null=True, blank=True)
 
     def __str__(self):
         return self.category.name

@@ -12,11 +12,12 @@ from settings.constants import ADKRITY_PROJECT_ID, CUSTOM_ATTRIBUTE_IDS
 from taiga.base.api.views import APIView
 from taiga.base.api.permissions import AllowAny
 from taiga.base.utils.date import *
+from taiga.projects.adkrity.models import AdKrityTagMaster
 # from utils.field_definations import get_random_obj_list
 # from utils.form_view import InternalFormView
 
 from taiga.projects.designers.forms import UploadDesignerFontsForm, DesignerMediaCategoriesForm, GetDesignerMediaForm, \
-    MultiUploadDesignerMediaForm
+    MultiUploadDesignerMediaForm, AdKrityTagMasterForm
 from taiga.projects.designers.functions import get_random_obj_list, success_json_response
 from taiga.projects.designers.models import DesignerFontMaster, DesignerMedia, DesignerMediaCategories
 from taiga.projects.designers.serializers import GetAdImageSerializer
@@ -354,7 +355,7 @@ def ads_images_search_view(request, business_wise=False):
         #     "category": "Category",
         #     "company_name": "Company Name",
         # }
-        FILTER_CUSTOM_ATTR = ["caption","category","company_name"]
+        FILTER_CUSTOM_ATTR = ["caption","category","company_name","tags"]
         if in_filter:
             for filter in in_filter:
                 if filter not in FILTER_CUSTOM_ATTR:
@@ -432,7 +433,20 @@ def ads_images_search_view(request, business_wise=False):
             final_queryset = initial_queryset
         final_queryset = final_queryset.filter(assigned_users__id__in=selected_designer)
 
-    final_queryset = final_queryset.annotate(attachments_count=Count('final_attachments')).filter(attachments_count__gt=0)
+    # if True:
+    #     tag = "interior"
+    #     tags = UserStoryCustomAttributesValues.objects.annotate(
+    #         tags_text=Func(F("attributes_values"), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['tags'])}"),
+    #                        function="jsonb_extract_path_text", output_field=TextField())).filter(tags_text__icontains=tag).values_list("user_story_id",flat=True)
+    #
+    #
+    # final_queryset = final_queryset.annotate(
+    #     final_attachments_count=Count('final_attachments', distinct=True),
+    #     attachments_count=Count('attachments', distinct=True)
+    # ).filter(
+    #     Q(final_attachments_count__gt=0) |
+    #     Q(final_attachments_count=0, attachments_count__gt=0)
+    # )
 
     if business_id:
         random_list = final_queryset.all()
@@ -714,3 +728,45 @@ def ads_images_search_view(request, business_wise=False):
 #         context["category_list"] = list(available_categories) if available_categories else []
 #
 #     return HttpResponse(template.render(context, request))
+
+
+class CreateAdKrityTagMasterView(APIView):
+    permission_classes = (AllowAny,)
+    template_name = 'designer-tags.html'
+    form_class = AdKrityTagMasterForm
+    title = "Create Ad Tags"
+    success_message = "Tags Created Successfully!"
+    submit_button_name = "Create"
+
+    def get(self, request):
+        form = self.form_class()
+        existing_tags = AdKrityTagMaster.objects.all().order_by('name')
+        context = {
+            "title": self.title,
+            "button_text": self.submit_button_name,
+            "existing_tags": existing_tags,
+            "form": form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        post_data = request.POST
+        print('post', self.__class__.__name__, post_data)
+
+        form = self.form_class(post_data)
+        if form.is_valid():
+            tag = form.save(commit=False)
+            tag.added_by = request.user
+            tag.save()
+            if post_data.get("name"):
+                custom_attribute = UserStoryCustomAttribute.objects.filter(project_id=ADKRITY_PROJECT_ID,name__iexact="tags").last()
+                custom_attribute.extra += [tag.name]
+                custom_attribute.save()
+            messages.success(request, self.success_message)
+            return redirect("create_tags")
+
+        return render(request, self.template_name, {
+            "title": self.title,
+            "button_text": self.submit_button_name,
+            "form": form,
+        })

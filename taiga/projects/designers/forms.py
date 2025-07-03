@@ -3,6 +3,7 @@ from django import forms
 
 # from utils.form_view import MultipleFileField, MultipleFileInput
 from .models import DesignerFontMaster, DesignerMedia, DesignerMediaCategories
+from taiga.projects.adkrity.models import AdKrityTagMaster
 
 
 class MultipleFileInput(ClearableFileInput):
@@ -87,3 +88,10 @@ class GetDesignerMediaForm(forms.Form):
         required=False,
         label="Select Categories"
     )
+
+
+class AdKrityTagMasterForm(forms.ModelForm):
+
+    class Meta:
+        model = AdKrityTagMaster
+        fields = ["name","category"]
