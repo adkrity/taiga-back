@@ -15,7 +15,7 @@ class BaseCustomAttributeAdmin:
     list_display_links = ["id", "name"]
     fieldsets = (
         (None, {
-            "fields": ("name", "type", "description", ("project", "order"))
+            "fields": ("name", "type", "description", "extra", ("project", "order"))
         }),
         ("Advanced options", {
             "classes": ("collapse",),

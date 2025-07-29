@@ -756,11 +756,14 @@ class CreateAdKrityTagMasterView(APIView):
         form = self.form_class(post_data)
         if form.is_valid():
             tag = form.save(commit=False)
-            tag.added_by = request.user
+            # tag.added_by = request.user
             tag.save()
             if post_data.get("name"):
                 custom_attribute = UserStoryCustomAttribute.objects.filter(project_id=ADKRITY_PROJECT_ID,name__iexact="tags").last()
-                custom_attribute.extra += [tag.name]
+                if custom_attribute.extra:
+                    custom_attribute.extra += [tag.name]
+                else:
+                    custom_attribute.extra = [tag.name]
                 custom_attribute.save()
             messages.success(request, self.success_message)
             return redirect("create_tags")

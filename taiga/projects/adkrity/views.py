@@ -1,12 +1,12 @@
 import requests
 from taiga.projects.models import Project
-from . import models
+from taiga.projects.adkrity import models
 from django.http import JsonResponse
 from django.db.models import Q, Count, PositiveIntegerField
 
 from taiga.projects.userstories.models import UserStory
-from settings.constants import SERVER_APP_BASE_URL, ADKRITY_PROJECT_ID, GET_MOVED_TICKETS_CONFIG
-from .functions import get_moved_tickets_data, get_pending_tickets_data
+from settings.constants import SERVER_APP_BASE_URL, ADKRITY_PROJECT_ID, GET_MOVED_TICKETS_CONFIG, CUSTOM_ATTRIBUTE_IDS
+from taiga.projects.adkrity.functions import get_moved_tickets_data, get_pending_tickets_data, get_user_stories_ids_for_updation
 from taiga.base.utils.request import make_post
 
 
@@ -88,3 +88,8 @@ def hourly_pending_work(request):
     except Exception as e:
         return JsonResponse({"Error": f"{e}"})
 # added by prince end
+
+
+def get_taiga_tickets_to_update_lost_data(request):
+    user_stories = get_user_stories_ids_for_updation()
+    return JsonResponse({'user_stories_ids': user_stories})

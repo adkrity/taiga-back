@@ -129,7 +129,7 @@ class UserStoryViewSet(AssignedUsersSignalMixin, OCCResourceMixin,
         # added by Jay remove attachment, comments, watchers count changed by prince dated 01/04/2025 to get epics related stories
 
         # api/v1/userstories?epic=1&include_tasks=true&order_by=epic_order requested url while fetching related userstories for epics
-        print(self.request.QUERY_PARAMS.keys(), "get_queryset for userstories")
+        print(self.request.QUERY_PARAMS.keys(), "get_queryset for userstories UserStoryViewSet")
         if self.action == "list" and 'epic' not in self.request.QUERY_PARAMS.keys():
             return qs
         # added by Jay end

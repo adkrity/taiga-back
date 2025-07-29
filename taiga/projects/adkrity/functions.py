@@ -1,11 +1,12 @@
 from taiga.projects.models import Membership
 from django.db.models import Count, Func, F, Value, Q
 from django.db.models.functions import Cast
-from django.db.models.fields import CharField
+from django.db.models.fields import CharField, TextField, IntegerField
 from taiga.projects.history.models import HistoryEntry
-from settings.constants import GET_MOVED_TICKETS_CONFIG
+from settings.constants import GET_MOVED_TICKETS_CONFIG, ADKRITY_PROJECT_ID, CUSTOM_ATTRIBUTE_IDS
 from taiga.base.utils.date import get_future_date, convert_to_local_time, get_today_date, get_time_range_for_date
 from taiga.projects.userstories.models import UserStory
+from taiga.projects.custom_attributes.models import UserStoryCustomAttributesValues
 
 
 # added by prince dated 08/02/2024
@@ -52,3 +53,27 @@ def get_pending_tickets_data(project_id, role):
         final_pending_work[f"{status_record.get('status__name')}"] = status_record.get("count")
 
     return final_pending_work
+
+
+def get_user_stories_ids_for_updation():
+    user_stories = list(
+        UserStoryCustomAttributesValues.objects.filter(user_story__project_id=ADKRITY_PROJECT_ID).annotate(
+            layout_1=Func(F('attributes_values'), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['layout_1'])}"),
+                          function="jsonb_extract_path_text",
+                          output_field=TextField()),
+            layout_2=Func(F('attributes_values'), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['layout_2'])}"),
+                          function="jsonb_extract_path_text",
+                          output_field=TextField()),
+            ad_id=Func(F('attributes_values'), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['ad_id'])}"),
+                       function="jsonb_extract_path_text",
+                       output_field=IntegerField()),
+            business_id=Func(F('attributes_values'), Value(f"{str(CUSTOM_ATTRIBUTE_IDS['business_id'])}"),
+                             function="jsonb_extract_path_text",
+                             output_field=IntegerField()),
+        ).filter(
+            Q(~Q(attributes_values__has_key=f"{str(CUSTOM_ATTRIBUTE_IDS['ad_id'])}") | Q(ad_id__isnull=True)) |
+            Q(~Q(attributes_values__has_key=f"{str(CUSTOM_ATTRIBUTE_IDS['business_id'])}") | Q(business_id__isnull=True)) |
+            Q(layout_1__icontains='api/v1/api/v1') | Q(layout_2__icontains='api/v1/api/v1')).values_list(
+            'user_story_id', flat=True))
+
+    return user_stories
