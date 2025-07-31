@@ -308,7 +308,7 @@ def ads_images_search_view(request, business_wise=False):
     print(search_query, in_filter, category_filter)
 
     list_for_ads = True
-    page_size = 30
+    page_size = 60
     if "psd" in request.get_full_path():
         list_for_ads = False
         page_size = 100
@@ -378,17 +378,24 @@ def ads_images_search_view(request, business_wise=False):
         if not search_query:
             final_queryset = initial_queryset
         if time_period == "today":
-            final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-1))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-1))[0])
         elif time_period == "week":
-            final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-8))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-8))[0])
         elif time_period == "month":
-            final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-30))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-30))[0])
         elif time_period == "quarter":
-            final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-90))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-90))[0])
         elif time_period == "latest":
-            final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-6))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__gt=get_time_range_for_date(get_future_date(-6))[0])
         elif time_period == "oldest":
-            final_queryset = final_queryset.filter(created_date__lt=get_time_range_for_date(get_future_date(-300))[0])
+            time_filter_final_queryset = final_queryset.filter(created_date__lt=get_time_range_for_date(get_future_date(-500))[0])
+        else:
+            time_filter_final_queryset = final_queryset.all()
+
+        if not time_filter_final_queryset.exists():
+            final_queryset = final_queryset.all()
+        else:
+            final_queryset = time_filter_final_queryset
 
     if category_filter:
         if not search_query:

@@ -92,4 +92,5 @@ def hourly_pending_work(request):
 
 def get_taiga_tickets_to_update_lost_data(request):
     user_stories = get_user_stories_ids_for_updation()
-    return JsonResponse({'user_stories_ids': user_stories})
+    total_user_stories_count = UserStory.objects.all().count()
+    return JsonResponse({'user_stories_ids': user_stories, 'total_user_stories_count': total_user_stories_count})
