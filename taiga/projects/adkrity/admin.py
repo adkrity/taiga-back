@@ -46,7 +46,9 @@ class UserStoryHourlyPendingWorkAdmin(admin.ModelAdmin):
 
 
 class AdKrityTagMasterAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'name', 'category')
+    list_filter = ('category',)
+    search_fields = ('name',)
 
 admin.site.register(models.UserStoryHourlyPendingWork, UserStoryHourlyPendingWorkAdmin)
 admin.site.register(models.ProjectRoleUserStoryStatusMapping, ProjectRoleUserStoryStatusMappingAdmin)

@@ -77,3 +77,15 @@ def get_user_stories_ids_for_updation():
             'user_story_id', flat=True))
 
     return user_stories
+
+
+def get_business_category_choices():
+    qs = (UserStoryCustomAttributesValues.objects
+          .annotate(json_val=Func(F("attributes_values"),
+                                  Value(str(CUSTOM_ATTRIBUTE_IDS['category'])),
+                                  function="jsonb_extract_path_text",
+                                  output_field=TextField()))
+          .values_list("json_val", flat=True)
+          .distinct())
+
+    return [(v, v) for v in qs if v]

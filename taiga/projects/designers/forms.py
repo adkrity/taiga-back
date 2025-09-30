@@ -1,9 +1,10 @@
-from django.forms import ModelForm, ClearableFileInput, FileField
+from django.forms import ModelForm, ClearableFileInput, FileField, Select
 from django import forms
 
 # from utils.form_view import MultipleFileField, MultipleFileInput
 from .models import DesignerFontMaster, DesignerMedia, DesignerMediaCategories
 from taiga.projects.adkrity.models import AdKrityTagMaster
+from taiga.projects.adkrity.functions import get_business_category_choices
 
 
 class MultipleFileInput(ClearableFileInput):
@@ -94,4 +95,14 @@ class AdKrityTagMasterForm(forms.ModelForm):
 
     class Meta:
         model = AdKrityTagMaster
-        fields = ["name","category"]
+        fields = ["name", "category"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            choices = get_business_category_choices()
+        except Exception:
+            choices = []
+
+        self.fields['category'].widget = Select(attrs={"class": "form-control"})
+        self.fields['category'].widget.choices = [("", "---------")] + choices
