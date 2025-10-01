@@ -317,9 +317,9 @@ def ads_images_search_view(request, business_wise=False):
         page_size = 50
 
     template = loader.get_template('ads-image-portfolio.html')
-    designers_role = Role.objects.filter(project_id=ADKRITY_PROJECT_ID, name__in=["Design","Senior Designer"]).last()
+    designers_role = Role.objects.filter(project_id=ADKRITY_PROJECT_ID, name__in=["Design","Senior Designer"])
 
-    designers = User.objects.filter(memberships__project_id=ADKRITY_PROJECT_ID,memberships__role=designers_role).distinct()
+    designers = User.objects.filter(memberships__project_id=ADKRITY_PROJECT_ID,memberships__role__in=designers_role).distinct()
     print(designers, "designers list")
 
     context = {}
