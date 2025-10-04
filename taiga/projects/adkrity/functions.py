@@ -86,6 +86,5 @@ def get_business_category_choices():
                                   function="jsonb_extract_path_text",
                                   output_field=TextField()))
           .values_list("json_val", flat=True)
-          .distinct())
-
+          .distinct().order_by('json_val'))
     return [(v, v) for v in qs if v]
