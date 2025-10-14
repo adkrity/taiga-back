@@ -9,6 +9,7 @@ from django.db import connection
 from django.conf import settings
 from django.utils import timezone
 
+from settings.constants import WEBHOOK_BLACKLIST_CUSTOM_ATTRS, WEBHOOK_BLACKLIST_OTHER_PARAMS
 from taiga.projects.history import services as history_service
 from taiga.projects.history.choices import HistoryType
 
@@ -24,6 +25,15 @@ def _get_project_webhooks(project):
             "key": webhook.key,
         })
     return webhooks
+
+
+def _get_changed_attributes(change_diff):
+    changed_attributes = None
+
+    if change_diff.get('custom_attributes') and change_diff.get('custom_attributes').get('changed'):
+        changed_attributes = change_diff.get('custom_attributes').get('changed').get('name')
+
+    return changed_attributes
 
 
 def on_new_history_entry(sender, instance, created, **kwargs):
@@ -53,6 +63,26 @@ def on_new_history_entry(sender, instance, created, **kwargs):
     elif instance.type == HistoryType.change:
         task = tasks.change_webhook
         extra_args = [instance]
+
+        """stop webhook triggers on comment update or deletion of user story dated:- 14/10/2025"""
+        if instance.comment or instance.edit_comment_date or instance.delete_comment_date or instance.comment_versions:
+            return None
+
+        """stop webhook triggers on assigned users, description, attachments and other parameters update or deletion of user story dated:- 14/10/2025"""
+        if list(instance.values_diff.keys()):
+            print(list(instance.values_diff.keys())[0], "changed attribute")
+            if list(instance.values_diff.keys())[0] in WEBHOOK_BLACKLIST_OTHER_PARAMS:
+                print(instance.values_diff, "values_diff maybe assigned users or description or final attachments or other params")
+                return None
+
+        """stop webhook triggers on certain custom attributes value change of user story dated:- 14/10/2025"""
+        if instance.values_diff:
+            changed_attributes = _get_changed_attributes(instance.values_diff)
+            print(changed_attributes, "Changed Attributes")
+            if changed_attributes in WEBHOOK_BLACKLIST_CUSTOM_ATTRS:
+                print("changed attribute",changed_attributes, "no webhook trigger")
+                return None
+
     elif instance.type == HistoryType.delete:
         task = tasks.delete_webhook
         extra_args = []

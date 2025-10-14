@@ -59,6 +59,9 @@ GET_MOVED_TICKETS_CONFIG = {"Design": {"to_status": [
                                        }
 }
 
+WEBHOOK_BLACKLIST_CUSTOM_ATTRS = ["Company Name", "Category", "Tags", "Notes For Designers", "Ad Text", "Colour Theme", "Design Focus", "Business Id", "Ad Id"]
+WEBHOOK_BLACKLIST_OTHER_PARAMS = ["description_diff", "assigned_users", "final_attachments", "attachments", "team_requirement", "client_requirement", "due_date"]
+
 DESIGNER_FONT_FOLDER = 'dfonts'
 DESIGNER_MEDIA_FOLDER = 'dm'
 
