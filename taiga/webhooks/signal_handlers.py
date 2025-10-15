@@ -31,7 +31,7 @@ def _get_changed_attributes(change_diff):
     changed_attributes = None
 
     if change_diff.get('custom_attributes') and change_diff.get('custom_attributes').get('changed'):
-        changed_attributes = change_diff.get('custom_attributes').get('changed').get('name')
+        changed_attributes = change_diff.get('custom_attributes').get('changed')[0].get('name')
 
     return changed_attributes
 
