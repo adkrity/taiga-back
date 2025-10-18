@@ -64,6 +64,7 @@ def on_new_history_entry(sender, instance, created, **kwargs):
         task = tasks.change_webhook
         extra_args = [instance]
 
+        print("history table instance", instance.__dict__)
         """stop webhook triggers on comment update or deletion of user story dated:- 14/10/2025"""
         if instance.comment or instance.edit_comment_date or instance.delete_comment_date or instance.comment_versions:
             return None

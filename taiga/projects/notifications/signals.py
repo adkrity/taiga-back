@@ -8,7 +8,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.utils import timezone
-
+from django.conf import settings
 from taiga.events import events
 from taiga.events import middleware as mw
 
@@ -47,6 +47,9 @@ def _push_to_web_notifications(event_type, data, recipients,
 
 
 def on_assigned_to(sender, user, obj, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     event_type = choices.WebNotificationType.assigned
     data = {
         "project": obj.project,
@@ -59,6 +62,9 @@ def on_assigned_to(sender, user, obj, **kwargs):
 
 
 def on_assigned_users(sender, user, obj, new_assigned_users, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     event_type = choices.WebNotificationType.assigned
     data = {
         "project": obj.project,
@@ -71,6 +77,9 @@ def on_assigned_users(sender, user, obj, new_assigned_users, **kwargs):
 
 
 def on_watchers_added(sender, user, obj, new_watchers, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     event_type = choices.WebNotificationType.added_as_watcher
     data = {
         "project": obj.project,
@@ -82,6 +91,9 @@ def on_watchers_added(sender, user, obj, new_watchers, **kwargs):
 
 
 def on_members_added(sender, user, project, new_members, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     serializer_class = serializers.NotificationDataSerializer
     event_type = choices.WebNotificationType.added_as_member
     data = {
@@ -96,6 +108,9 @@ def on_members_added(sender, user, project, new_members, **kwargs):
 
 
 def on_mentions(sender, user, obj, mentions, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     content_type = ContentType.objects.get_for_model(obj)
     valid_content_types = ['issue', 'task', 'userstory']
     if content_type.model in valid_content_types:
@@ -111,6 +126,9 @@ def on_mentions(sender, user, obj, mentions, **kwargs):
 
 
 def on_comment_mentions(sender, user, obj, mentions, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     event_type = choices.WebNotificationType.mentioned_in_comment
     data = {
         "project": obj.project,
@@ -123,6 +141,9 @@ def on_comment_mentions(sender, user, obj, mentions, **kwargs):
 
 
 def on_comment(sender, user, obj, watchers, **kwargs):
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+        return
+
     event_type = choices.WebNotificationType.comment
     data = {
         "project": obj.project,

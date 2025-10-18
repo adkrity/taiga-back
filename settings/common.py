@@ -22,16 +22,16 @@ ADMINS = (
 
 DEBUG = False
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'taiga',
-        'USER': 'taiga',
-        'PASSWORD': 'taiga',
-        'HOST': '172.31.45.84',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'taiga',
+#         'USER': 'taiga',
+#         'PASSWORD': 'taiga',
+#         'HOST': '172.31.45.84',
+#         'PORT': '5432',
+#     }
+# }
 
 if DEBUG:
     DATABASES = {
@@ -41,6 +41,17 @@ if DEBUG:
             'USER': 'postgres',
             'PASSWORD': 'postgres',
             'HOST': '127.0.0.1',
+            'PORT': '5432',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'taiga',
+            'USER': 'taiga',
+            'PASSWORD': 'taiga',
+            'HOST': '172.31.45.84',
             'PORT': '5432',
         }
     }
@@ -630,6 +641,8 @@ EXPORTS_TTL = 60 * 60 * 24  # 24 hours
 WEBHOOKS_ENABLED = True
 WEBHOOKS_ALLOW_PRIVATE_ADDRESS = True
 WEBHOOKS_ALLOW_REDIRECTS = False
+
+ENABLE_NOTIFICATIONS_SIGNALS = False
 
 # If is True /front/sitemap.xml show a valid sitemap of taiga-front client
 FRONT_SITEMAP_ENABLED = False
