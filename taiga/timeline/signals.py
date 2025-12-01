@@ -21,6 +21,15 @@ from taiga.timeline.service import (push_to_timelines,
 
 
 def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_data={}, refresh_totals=True):
+    # done by prince dated 01/12/25
+    #
+    # task msg on wp by jay sir
+    # taiga.timeline.service.push_to_timelines
+    # need to disable this code in taiga.
+    # early return here push_to_timelines because this function is called in this _push_to_timelines function only.
+
+    return
+
     project_id = None if project is None else project.id
 
     ct = ContentType.objects.get_for_model(obj)
