@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.db import connection
+from settings.constants import ADKRITY_PROJECT_ID
 
 from taiga.projects.history import services as history_services
 from taiga.projects.history.choices import HistoryType
@@ -27,8 +28,8 @@ def _push_to_timelines(project, user, obj, event_type, created_datetime, extra_d
     # taiga.timeline.service.push_to_timelines
     # need to disable this code in taiga.
     # early return here push_to_timelines because this function is called in this _push_to_timelines function only.
-
-    return
+    if project and project.id == ADKRITY_PROJECT_ID:
+        return
 
     project_id = None if project is None else project.id
 

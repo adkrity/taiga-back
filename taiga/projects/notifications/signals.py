@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.utils import timezone
 from django.conf import settings
+from settings.constants import ADKRITY_PROJECT_ID
 from taiga.events import events
 from taiga.events import middleware as mw
 
@@ -47,7 +48,7 @@ def _push_to_web_notifications(event_type, data, recipients,
 
 
 def on_assigned_to(sender, user, obj, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     event_type = choices.WebNotificationType.assigned
@@ -62,7 +63,7 @@ def on_assigned_to(sender, user, obj, **kwargs):
 
 
 def on_assigned_users(sender, user, obj, new_assigned_users, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     event_type = choices.WebNotificationType.assigned
@@ -77,7 +78,7 @@ def on_assigned_users(sender, user, obj, new_assigned_users, **kwargs):
 
 
 def on_watchers_added(sender, user, obj, new_watchers, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     event_type = choices.WebNotificationType.added_as_watcher
@@ -91,7 +92,7 @@ def on_watchers_added(sender, user, obj, new_watchers, **kwargs):
 
 
 def on_members_added(sender, user, project, new_members, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and project.id == ADKRITY_PROJECT_ID:
         return
 
     serializer_class = serializers.NotificationDataSerializer
@@ -108,7 +109,7 @@ def on_members_added(sender, user, project, new_members, **kwargs):
 
 
 def on_mentions(sender, user, obj, mentions, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     content_type = ContentType.objects.get_for_model(obj)
@@ -126,7 +127,7 @@ def on_mentions(sender, user, obj, mentions, **kwargs):
 
 
 def on_comment_mentions(sender, user, obj, mentions, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     event_type = choices.WebNotificationType.mentioned_in_comment
@@ -141,7 +142,7 @@ def on_comment_mentions(sender, user, obj, mentions, **kwargs):
 
 
 def on_comment(sender, user, obj, watchers, **kwargs):
-    if not settings.ENABLE_NOTIFICATIONS_SIGNALS:
+    if not settings.ENABLE_NOTIFICATIONS_SIGNALS and obj.project and obj.project.id == ADKRITY_PROJECT_ID:
         return
 
     event_type = choices.WebNotificationType.comment
