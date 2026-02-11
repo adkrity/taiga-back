@@ -172,7 +172,8 @@ class HistoryViewSet(ReadOnlyListViewSet):
 
         history_type = self.request.GET.get('type')
         if history_type == 'activity':
-            qs = qs.filter(diff__isnull=False, comment__exact='').exclude(diff__exact='')
+            # qs = qs.filter(diff__isnull=False, comment__exact='').exclude(diff__exact='') # old code commented
+            qs = qs.filter(diff__isnull=False).exclude(diff__exact='').exclude(diff={}) # remove empty comment filter and get all history for activity panel as well dated - 09/10/2026 done by prince
 
         if history_type == 'comment':
             qs = qs.exclude(comment__exact='')
