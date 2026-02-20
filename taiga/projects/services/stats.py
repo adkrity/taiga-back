@@ -270,7 +270,9 @@ def get_stats_for_project(project):
     # Iterate over all the project estimations and update our stats
     for role_point in role_points:
         role_id = role_point.role.id
-        points_value = role_point.points.value
+        points_value = None
+        if role_point.points:
+            points_value = role_point.points.value
         user_story = getattr(role_point, "user_story", None)
 
         milestone = None
