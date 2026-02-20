@@ -59,13 +59,13 @@ def attach_extra_info(queryset, user=None):
                                                    "status",
                                                    "owner")
 
-    us_queryset = userstories_utils.attach_total_points(us_queryset)
-    us_queryset = userstories_utils.attach_role_points(us_queryset)
+    # us_queryset = userstories_utils.attach_total_points(us_queryset) # done by prince dated 20/02/2026 to resolve milestone api issue
+    # us_queryset = userstories_utils.attach_role_points(us_queryset) # done by prince dated 20/02/2026 to resolve milestone api issue
     us_queryset = userstories_utils.attach_epics(us_queryset)
 
     queryset = queryset.prefetch_related(Prefetch("user_stories", queryset=us_queryset))
 
-    queryset = attach_total_points(queryset)
+    # queryset = attach_total_points(queryset) # done by prince dated 20/02/2026 to resolve milestone api issue
     queryset = attach_closed_points(queryset)
 
     return queryset
