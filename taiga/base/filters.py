@@ -89,7 +89,13 @@ class QueryParamsFilterMixin(BaseFilterBackend):
 
         if query_params:
             try:
-                queryset = queryset.filter(**query_params)
+                # print('jay query_params', request.QUERY_PARAMS, queryset, view)
+                if True and query_params.get('milestone') and view.__class__.__name__ == "TaskViewSet":
+                    # print('jay2')
+                    del query_params['milestone']
+                    queryset = queryset.filter(**query_params)
+                else:
+                    queryset = queryset.filter(**query_params)
             except ValueError:
                 raise exc.BadRequest(_("Error in filter params types."))
 
