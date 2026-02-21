@@ -101,9 +101,16 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
     @detail_route(methods=['get'])
     def stats(self, request, pk=None):
+        from taiga.projects.tasks.models import Task
         milestone = get_object_or_error(models.Milestone, request.user, pk=pk)
 
         self.check_permissions(request, "stats", milestone)
+
+        total_tasks = milestone.tasks.count()
+        completed_tasks = milestone.tasks.filter(status__is_closed=True).count()
+        if milestone.id == 1:
+            total_tasks = Task.objects.filter(project=milestone.project).count()
+            completed_tasks = Task.objects.filter(project=milestone.project, status__is_closed=True).count()
 
         total_points = milestone.total_points
         milestone_stats = {
@@ -114,8 +121,8 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
             'completed_points': milestone.closed_points.values(),
             'total_userstories': milestone.cached_user_stories.count(),
             'completed_userstories': milestone.cached_user_stories.filter(is_closed=True).count(),
-            'total_tasks': milestone.tasks.count(),
-            'completed_tasks': milestone.tasks.filter(status__is_closed=True).count(),
+            'total_tasks': total_tasks,
+            'completed_tasks': completed_tasks,
             'iocaine_doses': milestone.tasks.filter(is_iocaine=True).count(),
             'days': []
         }

@@ -48,7 +48,15 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     is_blocked = Field()
     blocked_note = Field()
     is_closed = MethodField()
+    user_story = MethodField()
     user_story_extra_info = Field()
+
+    def get_user_story(self, obj):
+        if self.__dict__.get('context') and self.__dict__.get('context').get('request') and self.__dict__.get('context').get('request').QUERY_PARAMS:
+            if self.__dict__.get('context').get('request').QUERY_PARAMS.get('milestone') == '1':
+                print(self.__dict__.get('context').get('request').QUERY_PARAMS)
+                return None
+        return obj.user_story_id
 
     def get_generated_user_stories(self, obj):
         assert hasattr(obj, "generated_user_stories_attr"),\

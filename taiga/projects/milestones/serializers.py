@@ -31,9 +31,25 @@ class MilestoneSerializer(ProjectExtraInfoSerializerMixin,
     closed_points = MethodField()
 
     def get_user_stories(self, obj):
+        from taiga.projects.userstories.models import UserStory
+        from taiga.projects.userstories import utils as userstories_utils
+
+        print('get_user_stories')
+        if obj.id == 1:
+            print('jay')
+            return UserStoryNestedSerializer(UserStory.objects.none(), many=True).data
+
+            us_queryset = UserStory.objects.filter(project=obj.project)
+            us_queryset = userstories_utils.attach_total_points(
+                us_queryset)
+            us_queryset = userstories_utils.attach_role_points(
+                us_queryset)
+            us_queryset = userstories_utils.attach_epics(us_queryset)
+            return UserStoryNestedSerializer(us_queryset, many=True).data
         return UserStoryNestedSerializer(obj.user_stories.all(), many=True).data
 
     def get_total_points(self, obj):
+        # return 0
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
         return obj.total_points_attr
 
