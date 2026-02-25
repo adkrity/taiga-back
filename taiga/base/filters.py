@@ -90,12 +90,14 @@ class QueryParamsFilterMixin(BaseFilterBackend):
         if query_params:
             try:
                 # print('jay query_params', request.QUERY_PARAMS, queryset, view)
-                if True and query_params.get('milestone') and view.__class__.__name__ == "TaskViewSet":
+                # -Done by Prince and Jay dated 21/02/2026 for one common centralized sprint which has all the tasks so no milestone filteration.
+                if True and query_params.get('milestone') and query_params.get('milestone') == '1' and  view.__class__.__name__ == "TaskViewSet":
                     # print('jay2')
                     del query_params['milestone']
                     queryset = queryset.filter(**query_params)
                 else:
                     queryset = queryset.filter(**query_params)
+                # end
             except ValueError:
                 raise exc.BadRequest(_("Error in filter params types."))
 

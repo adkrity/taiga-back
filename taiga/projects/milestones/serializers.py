@@ -34,22 +34,23 @@ class MilestoneSerializer(ProjectExtraInfoSerializerMixin,
         from taiga.projects.userstories.models import UserStory
         from taiga.projects.userstories import utils as userstories_utils
 
+        # -Done by Prince and Jay dated 21/02/2026 for one common centralized sprint which has all the tasks.
         print('get_user_stories')
         if obj.id == 1:
             print('jay')
             return UserStoryNestedSerializer(UserStory.objects.none(), many=True).data
 
-            us_queryset = UserStory.objects.filter(project=obj.project)
-            us_queryset = userstories_utils.attach_total_points(
-                us_queryset)
-            us_queryset = userstories_utils.attach_role_points(
-                us_queryset)
-            us_queryset = userstories_utils.attach_epics(us_queryset)
-            return UserStoryNestedSerializer(us_queryset, many=True).data
+            # commented this code because initially planned to get all task on sprint one based grouping by user stories but now only task
+
+            # us_queryset = UserStory.objects.filter(project=obj.project)
+            # us_queryset = userstories_utils.attach_total_points(us_queryset)
+            # us_queryset = userstories_utils.attach_role_points(us_queryset)
+            # us_queryset = userstories_utils.attach_epics(us_queryset)
+            # return UserStoryNestedSerializer(us_queryset, many=True).data
+        # end
         return UserStoryNestedSerializer(obj.user_stories.all(), many=True).data
 
     def get_total_points(self, obj):
-        # return 0
         assert hasattr(obj, "total_points_attr"), "instance must have a total_points_attr attribute"
         return obj.total_points_attr
 

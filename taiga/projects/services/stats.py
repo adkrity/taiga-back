@@ -270,7 +270,7 @@ def get_stats_for_project(project):
     # Iterate over all the project estimations and update our stats
     for role_point in role_points:
         role_id = role_point.role.id
-        points_value = None
+        points_value = None # done by Prince dated 20/02/2026 because role points were already stopped.
         if role_point.points:
             points_value = role_point.points.value
         user_story = getattr(role_point, "user_story", None)

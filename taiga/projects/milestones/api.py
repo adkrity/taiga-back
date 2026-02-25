@@ -106,6 +106,7 @@ class MilestoneViewSet(HistoryResourceMixin, WatchedResourceMixin,
 
         self.check_permissions(request, "stats", milestone)
 
+        # -Done by Prince and Jay dated 21/02/2026 for one common centralized sprint which has all the tasks so show stats accordingly.
         total_tasks = milestone.tasks.count()
         completed_tasks = milestone.tasks.filter(status__is_closed=True).count()
         if milestone.id == 1:

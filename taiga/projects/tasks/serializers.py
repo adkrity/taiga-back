@@ -30,7 +30,7 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
                          serializers.LightSerializer):
 
     id = Field()
-    user_story = Field(attr="user_story_id")
+    # user_story = Field(attr="user_story_id")
     ref = Field()
     project = Field(attr="project_id")
     milestone = Field(attr="milestone_id")
@@ -51,12 +51,14 @@ class TaskListSerializer(VoteResourceSerializerMixin, WatchedResourceSerializer,
     user_story = MethodField()
     user_story_extra_info = Field()
 
+    # -Done by Prince and Jay dated 21/02/2026 for one common centralized sprint which has all the tasks but user stories should be none because we don't want to group by user stories.
     def get_user_story(self, obj):
         if self.__dict__.get('context') and self.__dict__.get('context').get('request') and self.__dict__.get('context').get('request').QUERY_PARAMS:
             if self.__dict__.get('context').get('request').QUERY_PARAMS.get('milestone') == '1':
                 print(self.__dict__.get('context').get('request').QUERY_PARAMS)
                 return None
         return obj.user_story_id
+    # -end
 
     def get_generated_user_stories(self, obj):
         assert hasattr(obj, "generated_user_stories_attr"),\
