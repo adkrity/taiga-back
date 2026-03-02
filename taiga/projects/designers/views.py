@@ -328,7 +328,7 @@ def ads_images_search_view(request, business_wise=False):
     # self_design_custom_attribute = UserStoryCustomAttribute.objects.filter(project_id=ADKRITY_PROJECT_ID, name__iexact="We need to create design").last()
     self_design_userstory = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["we_need_to_create_design"]): True}).values_list("user_story_id",flat=True)
 
-    initial_queryset = UserStory.objects.filter(project_id=ADKRITY_PROJECT_ID, id__in=self_design_userstory).exclude(status_id__in=[1,3,4,5,6,7]).order_by('-id')
+    initial_queryset = UserStory.objects.filter(project_id=ADKRITY_PROJECT_ID, id__in=self_design_userstory).exclude(status_id__in=[1,3,4,5,7]).order_by('-id')
 
     final_queryset = UserStory.objects.none()
 
