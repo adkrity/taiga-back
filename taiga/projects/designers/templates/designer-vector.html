@@ -3,6 +3,37 @@
 {% block content %}
   {{ block.super }}
 
+  <style>
+    /* Styling for the red trash icon button */
+    .btn-delete {
+        background: #fff5f5;
+        border: 1px solid #ffc9c9;
+        color: #fa5252;
+        padding: 0.5rem 0.8rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        height: 100%; /* Match height of download button */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-delete:hover {
+        background: #fa5252;
+        color: white;
+        border-color: #fa5252;
+    }
+
+    /* Container to keep buttons side-by-side */
+    .button-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: stretch;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+  </style>
   {% if vectors %}
     <div class="vector-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: stretch;">
       {% for vector in vectors %}
@@ -12,11 +43,27 @@
               <img src="{{ vector.image.url }}" alt="{{ vector.category.name }} preview" style="max-width: 100%; height: auto;">
             {% endif %}
           </div>
-          <div class="vector-info" style="margin-top: 0.5rem;">
+          <div class="vector-info">
             <p class="vector-category" style="font-weight: bold; margin-bottom: 0.5rem;">{{ vector.category.name }}</p>
-            <a href="{{ vector.media.url }}" download class="btn btn-primary" style="display: inline-block; text-decoration: none; padding: 0.5rem 1rem; background-color: #007bff; color: #fff; border-radius: 4px;">
-              Download Vector
-            </a>
+
+            <div class="button-row">
+                <a href="{{ vector.media.url }}" download class="btn btn-primary" style="flex: 1; text-decoration: none; padding: 0.5rem; background-color: #007bff; color: #fff; border-radius: 4px; font-size: 14px; display: flex; align-items: center; justify-content: center;">
+                  Download
+                </a>
+                <form method="POST" style="margin: 0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_vector">
+                    <input type="hidden" name="vector_id" value="{{ vector.id }}">
+
+                    {% for cat_id in selected_category %}
+                        <input type="hidden" name="category" value="{{ cat_id }}">
+                    {% endfor %}
+
+                    <button type="submit" class="btn-delete" title="Delete Vector" onclick="return confirm('Are you sure you want to delete this?')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
           </div>
         </div>
       {% endfor %}

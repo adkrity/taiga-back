@@ -267,6 +267,7 @@ class DesignerMediaView(APIView):
             "title": self.title,
             "button_text": self.submit_button_name,
             "existing_categories": existing_categories,
+            # "vectors": DesignerMedia.objects.filter(deleted=False),
             "form": form,
         }
         return render(request, self.template_name, context)
@@ -274,12 +275,22 @@ class DesignerMediaView(APIView):
     def post(self, request):
         post_data = request.POST
         print('post', self.__class__.__name__, post_data)
-        category = post_data.get('category')
+        category = post_data.getlist('category')
+
+        action = post_data.get('action')
+        if action == 'delete_vector':
+            vector_id = post_data.get('vector_id')
+            DesignerMedia.objects.filter(id=vector_id).update(deleted=True)
+
+        vectors = DesignerMedia.objects.filter(deleted=False)
+        if category:
+            vectors = vectors.filter(category_id__in=category)
         return render(request, self.template_name, {
             "title": self.title,
             "form": self.form_class(request.POST),
             "button_text": self.submit_button_name,
-            "vectors": DesignerMedia.objects.filter(category_id__in=category, deleted=False),
+            # "vectors": DesignerMedia.objects.filter(category_id__in=category, deleted=False),
+            "vectors": vectors,
             "selected_category": category,
         })
 
