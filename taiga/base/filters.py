@@ -17,6 +17,7 @@ from django.utils.translation import gettext as _
 from taiga.base import exceptions as exc
 from taiga.base.api.utils import get_object_or_error
 from taiga.base.utils.db import to_tsquery
+from taiga.projects.milestones.models import Milestone
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +95,12 @@ class QueryParamsFilterMixin(BaseFilterBackend):
                 if True and query_params.get('milestone') and query_params.get('milestone') == '1' and  view.__class__.__name__ == "TaskViewSet":
                     # print('jay2')
                     del query_params['milestone']
-                    queryset = queryset.filter(**query_params)
+                    # queryset = queryset.filter(**query_params)
+                    closed_milestone_ids = list(Milestone.objects.filter(closed=True, project_id=5).values_list('id', flat=True))
+                    if closed_milestone_ids:
+                        queryset = queryset.filter(**query_params).exclude(milestone_id__in=closed_milestone_ids)
+                    else:
+                        queryset = queryset.filter(**query_params)
                 else:
                     queryset = queryset.filter(**query_params)
                 # end
