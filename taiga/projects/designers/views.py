@@ -22,11 +22,10 @@ from taiga.projects.designers.functions import get_random_obj_list, success_json
 from taiga.projects.designers.models import DesignerFontMaster, DesignerMedia, DesignerMediaCategories
 from taiga.projects.designers.serializers import GetAdImageSerializer
 from taiga.projects.userstories.models import UserStory
-from taiga.users.models import User
+from taiga.users.models import User, Role
 from taiga.projects.custom_attributes.models import UserStoryCustomAttribute, UserStoryCustomAttributesValues
 
 from taiga.base.api.fields import IntegerField
-from taiga.users.models import Role
 
 
 class DesignerFontsView(APIView):
@@ -316,7 +315,7 @@ def ads_images_search_view(request, business_wise=False):
         if category_filter:
             category_filter = category_filter.split(',')
 
-    print(search_query, in_filter, category_filter)
+    print(search_query, in_filter, category_filter, time_period)
 
     list_for_ads = True
     page_size = 60
@@ -339,7 +338,8 @@ def ads_images_search_view(request, business_wise=False):
     # self_design_custom_attribute = UserStoryCustomAttribute.objects.filter(project_id=ADKRITY_PROJECT_ID, name__iexact="We need to create design").last()
     self_design_userstory = UserStoryCustomAttributesValues.objects.filter(attributes_values__contains= {str(CUSTOM_ATTRIBUTE_IDS["we_need_to_create_design"]): True}).values_list("user_story_id",flat=True)
 
-    initial_queryset = UserStory.objects.filter(project_id=ADKRITY_PROJECT_ID, id__in=self_design_userstory).exclude(status_id__in=[1,3,4,5,7]).order_by('-id')
+    # initial_queryset = UserStory.objects.filter(project_id=ADKRITY_PROJECT_ID, id__in=self_design_userstory).exclude(status_id__in=[1,3,4,5,7]).order_by('-id')
+    initial_queryset = UserStory.objects.filter(project_id=ADKRITY_PROJECT_ID, id__in=self_design_userstory).order_by('-id')
 
     final_queryset = UserStory.objects.none()
 
@@ -483,12 +483,14 @@ def ads_images_search_view(request, business_wise=False):
     context['ads'] = list_of_ads
     context['q'] = search_query or ""
     context['in'] = in_filter
+    context['in_filters'] = in_filter
     context['b_id'] = business_id
     context['ad_id'] = ad_id
     context['category_list'] = []
     context['designers_list'] = designers
     context['list_for_ads'] = list_for_ads
     context['time_period'] = time_period
+    context['selected_categories'] = category_filter or []
     context['selected_designer'] = selected_designer
 
     if final_queryset.count() > 0:

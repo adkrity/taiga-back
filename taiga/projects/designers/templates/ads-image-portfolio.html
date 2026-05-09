@@ -263,19 +263,19 @@
         <div class="filter-title">Search In</div>
         <div class="filter-options">
           <div class="filter-option">
-            <input type="checkbox" name="in[]" value="category" id="category" checked />
+            <input type="checkbox" name="in[]" value="category" id="category" {% if 'category' in in_filters or not in_filters %}checked{% endif %} />
             <label for="category">Category</label>
           </div>
           <div class="filter-option">
-            <input type="checkbox" name="in[]" value="caption" id="caption" checked />
+            <input type="checkbox" name="in[]" value="caption" id="caption" {% if 'caption' in in_filters or not in_filters %}checked{% endif %} />
             <label for="caption">Caption</label>
           </div>
           <div class="filter-option">
-            <input type="checkbox" name="in[]" value="company_name" id="company_name" checked />
+            <input type="checkbox" name="in[]" value="company_name" id="company_name" {% if 'company_name' in in_filters or not in_filters %}checked{% endif %} />
             <label for="company_name">Business Name</label>
           </div>
           <div class="filter-option">
-            <input type="checkbox" name="in[]" value="tags" id="tags" checked />
+            <input type="checkbox" name="in[]" value="tags" id="tags" {% if 'tags' in in_filters or not in_filters %}checked{% endif %} />
             <label for="tags">Tags</label>
           </div>
         </div>
@@ -287,10 +287,10 @@
         <div class="filter-title">Time Period</div>
           <div class="filter-options">
             <select name="time_period" class="time-filter-dropdown">
-              <option value="latest" {% if time_period == 'latest' or not time_period %}selected{% endif %}>Latest</option>
+              <option value="latest" {% if time_period == 'latest'%}selected{% endif %}>Latest</option>
               <option value="today" {% if time_period == 'today' %}selected{% endif %}>Today</option>
               <option value="week" {% if time_period == 'week' %}selected{% endif %}>Last Week</option>
-              <option value="month" {% if time_period == 'month' %}selected{% endif %}>Last Month</option>
+              <option value="month" {% if time_period == 'month' or not time_period%}selected{% endif %}>Last Month</option>
               <option value="quarter" {% if time_period == 'quarter' %}selected{% endif %}>Last 3 Months</option>
               <option value="oldest" {% if time_period == 'oldest' %}selected{% endif %}>Oldest</option>
               <option value="all" {% if time_period == 'all' %}selected{% endif %}>All Time</option>
@@ -313,7 +313,7 @@
         </div>
       </div>
 
-
+      {% comment %}
       {% if category_list %}
         <div class="filter-section">
           <div class="filter-title">Categories</div>
@@ -328,6 +328,21 @@
             {% for data in category_list %}
             <div class="filter-option">
               <input type="checkbox" name="category[]" value="{{data}}" id="cat-{{data}}" checked />
+              <label for="cat-{{data}}">{{data}}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% endcomment %}
+
+      {% if category_list %}
+        <div class="filter-section">
+          <div class="filter-title">Categories</div>
+          <div class="filter-options">
+            {% for data in category_list %}
+            <div class="filter-option">
+              <input type="checkbox" name="category[]" value="{{data}}" id="cat-{{data}}" {% if data in selected_categories %}checked{% endif %} />
               <label for="cat-{{data}}">{{data}}</label>
             </div>
             {% endfor %}
