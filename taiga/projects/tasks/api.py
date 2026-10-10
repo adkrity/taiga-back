@@ -7,6 +7,7 @@
 
 from django.http import HttpResponse
 from django.utils.translation import gettext as _
+from settings.constants import ADKRITY_MOBILE_APP_PROJECT_ID
 
 from taiga.base.api.utils import get_object_or_error
 from taiga.base import filters, response
@@ -83,6 +84,10 @@ class TaskViewSet(AssignedToSignalMixin, OCCResourceMixin, VotedResourceMixin,
 
     def get_queryset(self):
         qs = super().get_queryset()
+        # solution done for removing closed task from list view when search is not there if search is there than closed task should also get searched. done only for project 5 and internal tool sprint and all task sprint.
+        if self.request.QUERY_PARAMS.get("project") == str(ADKRITY_MOBILE_APP_PROJECT_ID) and self.request.QUERY_PARAMS.get("milestone") in ["1", "12"] and not self.request.QUERY_PARAMS.get("q"):
+            closed_ids = list(TaskStatus.objects.filter(project_id=ADKRITY_MOBILE_APP_PROJECT_ID,is_closed=True).values_list("id", flat=True))
+            qs = qs.exclude(status_id__in=closed_ids)
         qs = qs.select_related("milestone",
                                "project",
                                "status",

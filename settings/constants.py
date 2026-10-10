@@ -2,14 +2,18 @@ from django.conf import settings
 from django.templatetags.static import static
 
 ADKRITY_PROJECT_ID = 1
+ADKRITY_MOBILE_APP_PROJECT_ID = 5
 if settings.DEBUG:
     ADKRITY_PROJECT_ID = 2
+    ADKRITY_MOBILE_APP_PROJECT_ID = 4
 SERVER_APP_BASE_URL= "https://adm.adkrity.com/api/v1/"
 # SERVER_APP_BASE_URL= "http://127.0.0.1:9999/api/v1/"
 
 TAIGA_TICKET_URL = "https://task.adkrity.com/"
 if settings.DEBUG:
     TAIGA_TICKET_URL = "http://127.0.0.1:8000/"
+    # TAIGA_BACK_URL = "http://127.0.0.1:8000/"
+    # TAIGA_TICKET_URL = "http://localhost:9001/"
 
 # PLACEHOLDER_IMAGE_LINK = TAIGA_TICKET_URL+"taiga/projects/designers/templates/assets/ad-placeholder-generic.jpg"
 PLACEHOLDER_IMAGE_LINK = static("ad-placeholder-generic.jpg")
@@ -64,6 +68,8 @@ WEBHOOK_BLACKLIST_OTHER_PARAMS = ["description_diff", "assigned_users", "final_a
 
 DESIGNER_FONT_FOLDER = 'dfonts'
 DESIGNER_MEDIA_FOLDER = 'dm'
+# DESIGNER_LAYOUT_FOLDER = 'layouts'
+# DESIGNER_PORTFOLIO_FOLDER = 'portfolio'
 
 CUSTOM_ATTRIBUTE_IDS = {
     "contact_number": 2,
